@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F2F0F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16121B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="robots" content="noindex">
+<title>Наш день</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Наш день">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=Golos+Text:wght@400;500;600;700&display=swap">
+<style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Layout: uma coluna de celular; o dia vira uma carreira de tricô (cada cuidado é um ponto), o mês vira um mosaico. Um fio liga as duas cidades no topo. */
+:root{
+  --bg:#F2F0F4; --surface:#FCFBFD; --sunk:#E9E6EE; --ink:#2B2233; --muted:#6C6378; --line:#DAD5E1;
+  --cherry:#9C2F4E; --cherry-soft:#F5DFE6; --dusk:#52669A; --dusk-soft:#DEE5F4; --zest:#B9661C; --zest-soft:#F9E7D3;
+  --on-accent:#FFFFFF;
+  --m1:#4E5C86; --m2:#8E9ABD; --m3:#B3B0BE; --m4:#F4B583; --m5:#DE8F2C;
+  --shadow:0 1px 2px rgba(43,34,51,.05),0 10px 28px rgba(43,34,51,.07);
+  --f-display:"Oranienbaum","Cormorant Garamond","Georgia","Times New Roman",serif;
+  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:22px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#16121B; --surface:#201A27; --sunk:#2A2334; --ink:#EEE9F3; --muted:#A99FB6; --line:#392F45;
+  --cherry:#EC8AA3; --cherry-soft:#43212E; --dusk:#A3B4DC; --dusk-soft:#262F47; --zest:#EDA661; --zest-soft:#3E2D1B;
+  --on-accent:#2A0F18;
+  --m1:#5C6EA4; --m2:#7D8AB2; --m3:#8E859C; --m4:#D9A37C; --m5:#F0AE57;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#16121B; --surface:#201A27; --sunk:#2A2334; --ink:#EEE9F3; --muted:#A99FB6; --line:#392F45;
+  --cherry:#EC8AA3; --cherry-soft:#43212E; --dusk:#A3B4DC; --dusk-soft:#262F47; --zest:#EDA661; --zest-soft:#3E2D1B;
+  --on-accent:#2A0F18;
+  --m1:#5C6EA4; --m2:#7D8AB2; --m3:#8E859C; --m4:#D9A37C; --m5:#F0AE57;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-appearance:none;appearance:none}
+:focus-visible{outline:2px solid var(--cherry);outline-offset:2px;border-radius:10px}
+h1,h2,h3,p{margin:0}
+h1,h2,h3,.disp{font-family:var(--f-display);font-weight:400;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:32px;line-height:1.12}
+h2{font-size:23px;line-height:1.2}
+h3{font-size:18px;line-height:1.25}
+.muted{color:var(--muted)} .small{font-size:13px} .tiny{font-size:11.5px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+
+.app{max-width:480px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px calc(98px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:22px}
+.app.fade>*{animation:fade .4s ease both}
+@keyframes fade{from{opacity:.2;transform:translateY(6px)}to{opacity:1;transform:none}}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:10px} .between{justify-content:space-between} .wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:14px}
+
+/* topo: o fio entre as duas cidades */
+.thread{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.thread b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.thread svg{flex:1;min-width:24px;height:12px}
+.thread path{stroke:var(--cherry);stroke-width:1.4;fill:none;stroke-linecap:round;opacity:.75}
+.thread .km{font-size:10.5px;letter-spacing:.08em;white-space:nowrap}
+.gear{border:0;background:var(--surface);box-shadow:var(--shadow);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* botões e campos */
+.btn{border:0;border-radius:15px;padding:13px 18px;font-weight:600;background:var(--cherry);color:var(--on-accent);text-align:center}
+.btn.soft{background:var(--sunk);color:var(--ink)}
+.btn.rose{background:var(--cherry-soft);color:var(--ink)}
+.btn.wide{width:100%}
+.link{border:0;background:none;color:var(--cherry);font-weight:600;font-size:13.5px;padding:6px 0;white-space:nowrap;flex:none}
+.ghost{border:0;background:none;color:var(--muted);font-size:13px;padding:6px 8px;border-radius:10px}
+textarea,input[type=text],input[type=date],input[type=time],select{width:100%;background:var(--sunk);border:1.5px solid transparent;border-radius:14px;padding:12px 14px;font-size:15px;min-width:0}
+textarea{resize:vertical}
+textarea:focus,input:focus,select:focus{border-color:var(--cherry);outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 13px;font-size:13.5px}
+.chip[aria-pressed="true"]{background:var(--cherry-soft);border-color:var(--cherry)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sunk);border-radius:15px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;border-radius:12px;padding:9px 6px;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);font-weight:600}
+.switch{width:46px;height:28px;border-radius:99px;background:var(--line);border:0;position:relative;flex:none;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.switch[aria-checked="true"]{background:var(--cherry)}
+.switch[aria-checked="true"]::after{transform:translateX(18px)}
+
+/* humor */
+.moods{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.mood{background:var(--sunk);border:1.5px solid transparent;border-radius:16px;padding:10px 2px 9px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;line-height:1.2;text-align:center;color:var(--muted);min-width:0}
+.mood .ic{width:26px;height:26px;color:var(--ink)}
+.mood i{width:22px;height:5px;border-radius:9px;display:block}
+.mood[aria-pressed="true"]{border-color:var(--cherry);background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.mb1{background:var(--m1)}.mb2{background:var(--m2)}.mb3{background:var(--m3)}.mb4{background:var(--m4)}.mb5{background:var(--m5)}
+.say{background:var(--zest-soft);border-radius:16px;padding:14px 16px;font-family:var(--f-display);font-size:18px;line-height:1.35}
+.gift{background:var(--cherry-soft);border-radius:var(--r);padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.gift .ic{color:var(--cherry);margin-top:3px}
+
+/* tricô */
+.knit{width:100%;height:auto;display:block}
+.sc rect{fill:var(--cherry)} .sd rect{fill:var(--dusk)} .sz rect{fill:var(--zest)}
+.knit text{fill:var(--muted);font-family:var(--f-body);font-size:9px}
+.knit line{stroke:var(--line);stroke-width:1.2;stroke-dasharray:2 4;stroke-linecap:round}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:3px;display:block}
+
+/* cuidados */
+.cares{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.care{background:var(--surface);border:1.5px solid transparent;border-radius:18px;box-shadow:var(--shadow);padding:14px 6px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0}
+.care .ic{width:25px;height:25px;color:var(--cherry)}
+.care .t{font-size:12.5px;font-weight:600;line-height:1.2;overflow-wrap:anywhere}
+.care .v{font-size:11px;color:var(--muted);line-height:1.25}
+.care[aria-pressed="true"]{background:var(--cherry-soft);border-color:var(--cherry);box-shadow:none}
+.water{display:flex;gap:4px;justify-content:center}
+.water i{width:8px;height:13px;border:1.4px solid var(--cherry);border-top:0;border-radius:0 0 4px 4px;display:block}
+.water i.f{background:var(--cherry)}
+
+/* agora no plano */
+.nowcard{background:var(--dusk-soft);border-radius:var(--r);padding:16px 18px;display:flex;gap:14px;align-items:center}
+.nowcard .when{font-family:var(--f-display);font-size:26px;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.studychip{border:0;width:100%;text-align:left;background:var(--zest-soft);border-radius:var(--r);padding:14px 18px;display:flex;gap:12px;align-items:center}
+.studychip .ic{color:var(--zest)}
+.hard{border:1.5px dashed var(--line);background:transparent;border-radius:var(--r);padding:15px 16px;display:flex;align-items:center;gap:12px;text-align:left;width:100%}
+.hard .ic{color:var(--dusk);width:26px;height:26px}
+
+/* cronograma */
+.weekstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.wd{border:1.5px solid transparent;background:var(--sunk);border-radius:14px;padding:8px 0 7px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--muted);min-width:0}
+.wd b{font-family:var(--f-display);font-weight:400;font-size:17px;color:var(--ink);line-height:1}
+.wd[aria-pressed="true"]{background:var(--surface);border-color:var(--cherry);box-shadow:var(--shadow)}
+.wd .dot{width:5px;height:5px;border-radius:50%;background:var(--dusk)}
+.wd.soft .dot{background:var(--zest)}
+.wd.today b{color:var(--cherry)}
+.tl{display:flex;flex-direction:column}
+.blk{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.blk:first-child{border-top:0}
+.blk .tm{font-variant-numeric:tabular-nums;font-size:13.5px;color:var(--muted);padding-top:1px}
+.blk .tx{min-width:0;overflow-wrap:anywhere}
+.blk .sub{font-size:12px;color:var(--muted)}
+.blk.done .tx>span:first-child{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.blk.now .tm{color:var(--cherry);font-weight:700}
+.chk{width:26px;height:26px;border-radius:50%;border:1.6px solid var(--dusk);background:transparent;display:grid;place-items:center;flex:none;padding:0}
+.chk.on{background:var(--dusk)}
+.chk.on::after{content:"";width:9px;height:5px;border:2px solid var(--surface);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.anchor{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--zest);margin-right:6px;vertical-align:middle}
+.edit{display:grid;grid-template-columns:104px 1fr;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.edit:first-child{border-top:0}
+.edit .tools{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+.task{display:flex;align-items:center;gap:12px;background:var(--sunk);border-radius:14px;padding:10px 12px}
+.task .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.task.done .tx{color:var(--muted);text-decoration:line-through}
+.addrow{display:flex;gap:8px}
+.addrow .btn{padding:12px 16px}
+
+/* estudo */
+.flash{border:0;width:100%;background:var(--zest-soft);border-radius:var(--r);padding:26px 18px;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
+.flash .w{font-family:var(--f-display);font-size:30px;line-height:1.15;overflow-wrap:anywhere}
+.flash .p{font-size:14px;color:var(--muted)}
+.sday{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.sday:first-child{border-top:0}
+.sday .d{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sday.today .d{color:var(--cherry);font-weight:700}
+.sday .chk{border-color:var(--zest)} .sday .chk.on{background:var(--zest)}
+.sday .chk:disabled{opacity:.3}
+
+/* nós */
+.q{font-family:var(--f-display);font-size:22px;line-height:1.28}
+.locked{background:var(--sunk);border-radius:14px;padding:13px 14px;display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13.5px}
+.answer{background:var(--cherry-soft);border-radius:14px;padding:13px 14px;font-size:14.5px}
+.answer.his{background:var(--dusk-soft)}
+.big{font-family:var(--f-display);font-size:46px;line-height:1;font-variant-numeric:tabular-nums}
+.road{position:relative;height:22px}
+.road::before{content:"";position:absolute;left:0;right:0;top:10px;height:2px;background:var(--line);border-radius:2px}
+.road i{position:absolute;left:0;top:10px;height:2px;background:var(--cherry);border-radius:2px}
+.road b{position:absolute;top:4px;width:14px;height:14px;border-radius:50%;background:var(--cherry);border:3px solid var(--surface);transform:translateX(-50%)}
+.acts{display:flex;flex-direction:column}
+.act{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:12px 0;border-top:1px solid var(--line)}
+.act:first-child{border-top:0}
+.act .n{font-weight:600} .act .f{font-size:11px;color:var(--muted);align-self:center;text-transform:uppercase;letter-spacing:.08em}
+.act .d{grid-column:1/-1;font-size:13.5px;color:var(--muted)}
+.quick{display:flex;flex-direction:column;gap:8px}
+.quick button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.quick button span:last-child{color:var(--muted);font-size:12.5px;text-align:right}
+
+/* pausa */
+.exbtn{border:0;background:var(--surface);box-shadow:var(--shadow);border-radius:18px;padding:15px 16px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;width:100%}
+.exbtn .n{font-weight:600} .exbtn .m{font-size:12px;color:var(--muted)} .exbtn .d{grid-column:1/-1;font-size:13.5px;color:var(--muted)}
+.orbw{display:grid;place-items:center;min-height:250px}
+.orb{width:112px;height:112px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--zest-soft),var(--cherry-soft) 62%,var(--cherry) 150%);box-shadow:0 0 0 18px color-mix(in srgb,var(--cherry-soft) 55%,transparent);transition:transform 4s ease-in-out}
+.orb.in{transform:scale(1.7)} .orb.out{transform:scale(1);transition-duration:6s}
+.phase{font-family:var(--f-display);font-size:22px;text-align:center;min-height:30px}
+
+/* diário: mosaico */
+.mosaic{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.mosaic .h{font-size:10.5px;text-align:center;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.tile{aspect-ratio:1;border-radius:8px;border:1px dashed var(--line);display:grid;place-items:center;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tile.f{border:0;color:#fff}
+.tile.f.t3,.tile.f.t4,.tile.f.t5{color:#2B2233}
+.tile.t1{background:var(--m1)}.tile.t2{background:var(--m2)}.tile.t3{background:var(--m3)}.tile.t4{background:var(--m4)}.tile.t5{background:var(--m5)}
+.tile.now{outline:2px solid var(--cherry);outline-offset:1px}
+.tile.fut{border-style:solid;opacity:.45}
+.entry{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:5px}
+.entry:first-child{border-top:0;padding-top:0}
+.badge{font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--zest-soft);border-radius:99px;padding:2px 8px;font-weight:600}
+.notex{background:var(--zest-soft);border-radius:14px;padding:10px 14px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+/* resultados */
+.hero{font-family:var(--f-display);font-size:68px;line-height:.9;font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--sunk);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat b{font-family:var(--f-display);font-weight:400;font-size:25px;line-height:1.15;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat span{font-size:12px;color:var(--muted);line-height:1.3}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{fill:var(--muted);font-family:var(--f-body);font-size:9px}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .avg{stroke:var(--cherry);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.chart .gl{stroke:var(--muted);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.chart .dot{stroke:var(--surface)}
+.fm1{fill:var(--m1)}.fm2{fill:var(--m2)}.fm3{fill:var(--m3)}.fm4{fill:var(--m4)}.fm5{fill:var(--m5)}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:9px 10px;align-items:center;font-size:13px}
+.bars .b{height:14px;border-radius:0 4px 4px 0;min-width:3px}
+.bars .n{font-variant-numeric:tabular-nums;font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(7,1fr);height:118px;border-bottom:1px solid var(--line)}
+.col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.col i{display:block;width:22px;border-radius:4px 4px 0 0;background:var(--m2)}
+.col.best i{background:var(--cherry)}
+.collab{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.lineleg{display:inline-block;width:16px;height:2px;background:var(--cherry);border-radius:2px;vertical-align:middle}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t td,table.t th{text-align:left;padding:6px 0;border-top:1px solid var(--line);font-weight:400}
+table.t td:last-child,table.t th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.tip{position:fixed;z-index:70;background:var(--ink);color:var(--bg);font-size:12.5px;padding:6px 10px;border-radius:10px;pointer-events:none;transform:translate(-50%,calc(-100% - 8px));white-space:nowrap}
+
+/* abas */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px max(8px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.tabs .in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+.tab{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;min-width:0;color:var(--muted);padding:4px 0}
+.tab[aria-selected="true"]{color:var(--cherry);font-weight:700}
+
+/* camadas */
+.layer{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;padding:calc(22px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.layer .in{max-width:444px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.choice{display:flex;flex-direction:column;gap:8px}
+.choice button{border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:15px;text-align:left;font-size:15px}
+.choice button[aria-pressed="true"]{border-color:var(--cherry);background:var(--cherry-soft)}
+.set{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.set:first-child{border-top:0}
+.profiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.profiles button{border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:14px;text-align:left}
+.profiles button[aria-pressed="true"]{border-color:var(--cherry);background:var(--cherry-soft)}
+.profiles b{display:block;font-family:var(--f-display);font-weight:400;font-size:19px}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:99px;font-size:14px;z-index:60;transition:.3s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+ol.guide{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+<nav class="tabs"><div class="in" id="tabs" role="tablist"></div></nav>
+<div id="layer"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* =====================================================================
+   1. ARMAZENAMENTO (só neste aparelho; a sincronização entra na versão online)
+   ===================================================================== */
+var KEY="nash-den-v2";
+function load(){try{var s=localStorage.getItem(KEY);return s?JSON.parse(s):null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* =====================================================================
+   2. DATAS E FUSOS
+   ===================================================================== */
+function dkey(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function addDays(n,from){var d=from?new Date(from):new Date();d.setDate(d.getDate()+n);return d}
+function wIdx(d){return ((d||new Date()).getDay()+6)%7}            /* segunda = 0 */
+function monday(d){d=new Date(d||new Date());d.setHours(12,0,0,0);d.setDate(d.getDate()-wIdx(d));return d}
+function tzHM(tz){try{return new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",hourCycle:"h23",timeZone:tz}).format(new Date())}catch(e){var n=new Date();return String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0")}}
+function toMin(t){var p=String(t).split(":");return (+p[0])*60+(+p[1]||0)}
+function fmtMin(m){m=((m%1440)+1440)%1440;return Math.floor(m/60)+":"+String(m%60).padStart(2,"0")}
+var SP="America/Sao_Paulo";
+function herNow(){return toMin(tzHM(S.tz))}
+function gapMin(){return toMin(tzHM(SP))-herNow()}               /* quanto somar à hora dela para dar a dele */
+
+/* =====================================================================
+   3. CONTEÚDO (textos em russo para ela, em português para ele)
+   ===================================================================== */
+var MOODS=[{v:5,ru:"Светло на душе",pt:"Leve por dentro"},{v:4,ru:"Неплохо",pt:"Bem"},{v:3,ru:"Так себе",pt:"Mais ou menos"},{v:2,ru:"Тяжеловато",pt:"Um pouco pesado"},{v:1,ru:"Очень тяжело",pt:"Muito difícil"}];
+var WORDS=[["спокойная","tranquila"],["уставшая","cansada"],["тревожно","ansiosa"],["скучаю по тебе","com saudade"],["радостная","feliz"],["грустно","triste"],["раздражённая","irritada"],["благодарная","grata"],["пусто внутри","vazia por dentro"],["вдохновлённая","inspirada"]];
+var CARES=[
+ {id:"water",ru:"Вода",pt:"Água",full:"6–8 стаканов",min:"Один стакан",ic:"M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"},
+ {id:"move",ru:"Движение",pt:"Movimento",full:"20 минут",min:"5 минут растяжки",ic:"M13.5 4.2a1.3 1.3 0 1 0 0 .1M9 21l2.5-6 3 3v3M7 12l3-3.5 3.5 1.5 2.5 3M11.5 15l1-6.5"},
+ {id:"light",ru:"Дневной свет",pt:"Luz do dia",full:"Прогулка днём",min:"5 минут у окна",ic:"M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"},
+ {id:"food",ru:"Нормальная еда",pt:"Comida de verdade",full:"Три приёма пищи",min:"Что-то тёплое",ic:"M3 11h18a9 9 0 0 1-18 0zM8 7c0-1.5 1-1.5 1-3M12 7c0-1.5 1-1.5 1-3M16 7c0-1.5 1-1.5 1-3"},
+ {id:"sleep",ru:"Сон",pt:"Sono",full:"Лечь до полуночи",min:"Отметить, когда легла",ic:"M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"},
+ {id:"good",ru:"Что-то хорошее",pt:"Algo bom",full:"Три хорошие вещи",min:"Одна хорошая вещь",ic:"M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"},
+ {id:"breath",ru:"Дыхание",pt:"Respirar",full:"3 минуты",min:"1 минута",ic:"M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h8"},
+ {id:"people",ru:"Связь с людьми",pt:"Contato",full:"Поговорить с близким",min:"Одно сообщение",ic:"M4 5h16v11H9l-5 4z"},
+ {id:"self",ru:"Забота о себе",pt:"Cuidar de si",full:"Тёплый душ, музыка",min:"Умыться, надеть удобное",ic:"M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"}];
+var PRAISE=["Отмечено. Ты молодец.","Маленький шаг, но твой.","Тело скажет тебе спасибо.","Засчитано. И этого достаточно.","Ещё одна петелька в твоём ряду."];
+
+/* Cronograma de rotina: dois moldes. a = âncora (fica mesmo com pouca energia). */
+function defRoutine(){return{
+ work:[
+  {id:"w1",t:"08:30",ru:"Проснуться без спешки: вода и открытые шторы",pt:"Acordar sem pressa: água e cortinas abertas",a:1},
+  {id:"w2",t:"09:00",ru:"Завтрак и любимый чай",pt:"Café da manhã e o chá favorito"},
+  {id:"w3",t:"10:30",ru:"Одно важное дело",pt:"Uma coisa importante"},
+  {id:"w4",t:"13:00",ru:"Обед и 10 минут дневного света",pt:"Almoço e 10 minutos de luz do dia",a:1},
+  {id:"w5",t:"15:00",ru:"Движение: 20 минут или 5 минут растяжки",pt:"Movimento: 20 min ou 5 de alongamento"},
+  {id:"w6",t:"17:00",ru:"Португальский",pt:"Português",study:1},
+  {id:"w7",t:"18:00",ru:"Наше время с Габриэлем",pt:"Nosso tempo juntos",us:1,a:1},
+  {id:"w8",t:"20:00",ru:"Творчество: вязание, рисунок или мозаика",pt:"Criar: tricô, desenho ou mosaico"},
+  {id:"w9",t:"22:30",ru:"Вечерний ритуал: тёплый душ и телефон в сторону",pt:"Ritual da noite: banho quente e celular de lado",a:1},
+  {id:"w10",t:"23:30",ru:"Сон",pt:"Dormir"}],
+ rest:[
+  {id:"r1",t:"09:30",ru:"Проснуться, когда выспишься. Вода и свет",pt:"Acordar descansada. Água e luz",a:1},
+  {id:"r2",t:"11:00",ru:"Медленный завтрак",pt:"Café da manhã sem pressa"},
+  {id:"r3",t:"12:30",ru:"Прогулка, пока светло",pt:"Caminhada enquanto está claro",a:1},
+  {id:"r4",t:"15:00",ru:"Что-то для души: творчество или близкие люди",pt:"Algo para a alma: criar ou ver alguém querido"},
+  {id:"r5",t:"18:00",ru:"Наше время с Габриэлем",pt:"Nosso tempo juntos",us:1,a:1},
+  {id:"r6",t:"20:00",ru:"Кино вдвоём или тихий вечер",pt:"Cinema a dois ou noite tranquila"},
+  {id:"r7",t:"23:30",ru:"Сон",pt:"Dormir",a:1}]}}
+
+/* Cronograma de estudo: um gesto por dia, domingo livre. Ela estuda português, ele russo, no mesmo tema. */
+var SPLAN=[
+ {ru:"Новые слова",dru:"Пролистай карточки недели и выбери три любимых слова.",pt:"Palavras novas",dpt:"Passe pelos cartões da semana e escolha três palavras favoritas."},
+ {ru:"Слушаем",dru:"Одна песня или короткое видео на португальском. Понимать всё не нужно.",pt:"Escutar",dpt:"Uma música ou vídeo curto em russo. Não precisa entender tudo."},
+ {ru:"Говорим",dru:"Запиши Габриэлю голосовое с одной фразой недели.",pt:"Falar",dpt:"Mande para ela um áudio com uma frase da semana."},
+ {ru:"Фразы",dru:"Три готовые фразы: прочитай вслух и напиши одну от руки.",pt:"Frases prontas",dpt:"Três frases prontas: leia em voz alta e escreva uma à mão."},
+ {ru:"Разговор вдвоём",dru:"10 минут с Габриэлем: половина на португальском, половина на русском.",pt:"Conversa a dois",dpt:"10 minutos com ela: metade em português, metade em russo."},
+ {ru:"Повторение",dru:"Карточки ещё раз, как игра. Что запомнилось, то твоё.",pt:"Revisão",dpt:"Os cartões de novo, como um jogo. O que ficou, ficou."},
+ {ru:"Отдых",dru:"Сегодня ничего не нужно. Язык укладывается, пока ты отдыхаешь.",pt:"Descanso",dpt:"Hoje não precisa de nada. A língua assenta enquanto você descansa.",rest:1}];
+var THEMES=[
+ {ru:"Привет и знакомство",pt:"Olá e apresentações",w:[
+  {p:"Oi!",r:"Привет!",s:"ой",t:"privét"},{p:"Bom dia",r:"Доброе утро",s:"бон джи́а",t:"dóbroie útro"},
+  {p:"Boa noite",r:"Спокойной ночи",s:"бо́а но́йчи",t:"spokóinoi nótchi"},{p:"Tudo bem?",r:"Как дела?",s:"ту́ду бэйн",t:"kak dielá"},
+  {p:"Obrigada",r:"Спасибо",s:"обрига́да",t:"spassíba"},{p:"Por favor",r:"Пожалуйста",s:"пор фаво́р",t:"pajálusta"},
+  {p:"Meu nome é Anastasia",r:"Меня зовут Анастасия",rm:"Меня зовут Габриэль",s:"мэ́у но́ми э",t:"miniá zavút"},{p:"Prazer!",r:"Приятно познакомиться",s:"празэ́р",t:"priiátna paznakómitsa"}]},
+ {ru:"Еда и кафе",pt:"Comida e café",w:[
+  {p:"água",r:"вода",s:"а́гуа",t:"vadá"},{p:"café",r:"кофе",s:"кафэ́",t:"kófe"},
+  {p:"açaí",r:"асаи",s:"асаи́",t:"assaí"},{p:"Estou com fome",r:"Я хочу есть",s:"исто́у кон фо́ми",t:"ia khatchú iest"},
+  {p:"Que delícia!",r:"Как вкусно!",s:"ки дэли́сия",t:"kak fkúsna"},{p:"Sem manga, por favor",r:"Без манго, пожалуйста",s:"сэйн ма́нга, пор фаво́р",t:"biez mánga, pajálusta"},
+  {p:"A conta, por favor",r:"Счёт, пожалуйста",s:"а ко́нта, пор фаво́р",t:"shiót, pajálusta"},{p:"pão de queijo",r:"сырные булочки",s:"па́ун джи кэ́йжу",t:"sýrnye búlatchki"}]},
+ {ru:"Дом и быт",pt:"Casa e dia a dia",w:[
+  {p:"casa",r:"дом",s:"ка́за",t:"dom"},{p:"cozinha",r:"кухня",s:"кози́нья",t:"kúkhnia"},
+  {p:"quarto",r:"спальня",s:"куа́рту",t:"spálnia"},{p:"cachorro",r:"собака",s:"кашо́хху",t:"sabáka"},
+  {p:"Onde fica…?",r:"Где находится…?",s:"о́нджи фи́ка",t:"gdié nakhóditsa"},{p:"Preciso de ajuda",r:"Мне нужна помощь",s:"преси́зу джи ажу́да",t:"mnié nujná pómashch"},
+  {p:"lava-louças",r:"посудомоечная машина",s:"ла́ва ло́усас",t:"passudamóietchnaia mashýna"},{p:"Estou em casa",r:"Я дома",s:"исто́у эйн ка́за",t:"ia dóma"}]},
+ {ru:"Чувства и мы",pt:"Sentimentos e nós dois",w:[
+  {p:"Estou com saudade",r:"Я скучаю",s:"исто́у кон сауда́джи",t:"ia skutcháiu"},{p:"Eu te amo",r:"Я тебя люблю",s:"э́у чи а́му",t:"ia tibiá liubliú"},
+  {p:"Estou cansada",r:"Я устала",rm:"Я устал",s:"исто́у канса́да",t:"ia ustál"},{p:"Estou feliz",r:"Я счастлива",rm:"Я счастлив",s:"исто́у фэли́с",t:"ia shástlif"},
+  {p:"Me abraça",r:"Обними меня",s:"ми абра́са",t:"abnimí miniá"},{p:"Juntos",r:"Вместе",s:"жу́нтус",t:"vmiéstie"},
+  {p:"Nossa casa",r:"Наш дом",s:"но́са ка́за",t:"nash dom"},{p:"Até logo",r:"До скорого",s:"атэ́ ло́гу",t:"da skórava"}]}];
+
+var QUESTIONS=[
+ ["Что сегодня вызвало у тебя улыбку?","O que te fez sorrir hoje?"],["Какое твоё самое тёплое детское воспоминание?","Qual sua lembrança de infância mais quentinha?"],
+ ["Что бы мы делали, если бы сегодня были вместе?","O que faríamos se hoje estivéssemos juntos?"],["За что ты можешь себя сегодня похвалить?","Por que você pode se elogiar hoje?"],
+ ["Какую песню ты бы мне сейчас включила?","Que música você colocaria para mim agora?"],["Чего ты больше всего ждёшь от нашей встречи?","O que você mais espera do nosso reencontro?"],
+ ["Когда ты почувствовала, что любишь меня?","Quando você sentiu que me amava?"],["Какая у тебя есть мечта, о которой я ещё не знаю?","Que sonho você tem que eu ainda não conheço?"],
+ ["Что тебе помогает, когда тебе грустно?","O que te ajuda quando você está triste?"],["Какой будет наша первая общая традиция?","Qual vai ser nossa primeira tradição juntos?"],
+ ["Что ты хотела бы попробовать в Бразилии первым?","O que você quer experimentar primeiro no Brasil?"],["Что я делаю, от чего ты чувствуешь себя любимой?","O que eu faço que te faz se sentir amada?"],
+ ["Опиши свой идеальный выходной.","Descreva seu fim de semana ideal."],["Чему ты научилась о себе в этом году?","O que você aprendeu sobre si este ano?"],
+ ["Что бы ты сказала себе пятилетней?","O que você diria para você aos cinco anos?"]];
+var QUICK_G=[["Estou pensando em você","Я думаю о тебе"],["Orgulho de você","Я горжусь тобой"],["Te mando um abraço","Обнимаю тебя крепко"],["Descansa, eu estou aqui","Отдохни, я рядом"],["Mal posso esperar para te ver","Не могу дождаться нашей встречи"]];
+var QUICK_A=[["Я думаю о тебе","Estou pensando em você"],["Скучаю по тебе","Estou com saudade"],["Обнимаю тебя","Te mando um abraço"],["Спасибо, что ты есть","Obrigada por você existir"]];
+var ACTS=[
+ ["Доброе утро и спокойной ночи","Bom dia e boa noite","Голосовое или фото до 30 секунд ждёт, пока другой проснётся.","Áudio ou foto de até 30 s que espera o outro acordar.","каждый день","diária"],
+ ["Готовим вместе","Mesma receita","Одно блюдо в один день и два фото рядом.","Um prato no mesmo dia e as duas fotos lado a lado.","раз в неделю","semanal"],
+ ["Кино вдвоём","Cinema a dois","Один фильм и общий отсчёт до старта.","Um filme e uma contagem para dar play juntos.","раз в неделю","semanal"],
+ ["Открой, когда…","Cartas \"abra quando\"","Письма на грустный день, на «скучаю», на бессонницу.","Cartas para dia triste, saudade, insônia.","когда нужно","quando precisar"],
+ ["Шкатулка воспоминаний","Pote de memórias","Утром появляется одно случайное воспоминание.","De manhã aparece uma memória ao acaso.","всегда","contínua"],
+ ["Наше будущее","Nosso futuro","Общий список мечтаний: дом, поездки, жизнь в Бразилии.","Lista de sonhos: a casa, viagens, a vida no Brasil.","когда хотим","quando quiserem"]];
+var EX=[
+ {id:"b46",ru:"Дыхание 4 · 6",pt:"Respiração 4 · 6",m:"1–3",d:["Вдох на 4, выдох на 6. Длинный выдох успокаивает.","Inspire 4, expire 6. A expiração longa acalma."]},
+ {id:"ground",ru:"Здесь и сейчас",pt:"Aqui e agora",m:"2",d:["Когда мысли бегут слишком быстро.","Quando os pensamentos correm demais."],steps:[["Назови 5 вещей, которые ты видишь.","Nomeie 5 coisas que você vê."],["4 вещи, которых можешь коснуться.","4 coisas que pode tocar."],["3 звука, которые слышишь.","3 sons que ouve."],["2 запаха вокруг.","2 cheiros ao redor."],["1 вкус. И медленный вдох.","1 sabor. E uma respiração lenta."]]},
+ {id:"kind",ru:"Добрее к мысли",pt:"Gentil com o pensamento",m:"3",d:["Когда внутренний критик слишком громкий.","Quando a autocrítica fala alto."],input:1,steps:[["Какая мысль сейчас тебя тяготит?","Que pensamento está te pesando?"],["Насколько ты в неё веришь, от 0 до 100?","Quanto você acredita nele, de 0 a 100?"],["Что бы ты сказала подруге, если бы она так думала?","O que diria a alguém querido que pensasse assim?"],["Как можно сказать это себе чуть мягче?","Como dizer isso a si com mais suavidade?"],["А теперь: насколько ты веришь в первую мысль?","E agora, quanto acredita no primeiro pensamento?"]]},
+ {id:"three",ru:"Три хорошие вещи",pt:"Três coisas boas",m:"2",d:["Тихий вечерний ритуал.","Um ritual calmo para a noite."],input:1,steps:[["Первая хорошая вещь сегодня.","A primeira coisa boa de hoje."],["Вторая, даже совсем маленькая.","A segunda, mesmo bem pequena."],["Третья. Спасибо, что заметила.","A terceira. Que bom que você percebeu."]]},
+ {id:"heart",ru:"Рука на сердце",pt:"Mão no coração",m:"1",d:["Для тяжёлого дня.","Para um dia difícil."],steps:[["Положи руку на сердце. Почувствуй тепло.","Coloque a mão no coração. Sinta o calor."],["Скажи себе: мне сейчас трудно. Трудно бывает всем. Я буду к себе доброй.","Diga a si: está difícil agora. Todo mundo passa por isso. Vou ser gentil comigo."],["Сделай три медленных вдоха.","Faça três respirações lentas."]]},
+ {id:"helps",ru:"Что мне помогает",pt:"O que me faz bem",m:"3",d:["Твой личный список того, что поднимает настроение.","Sua lista pessoal do que levanta o humor."]}];
+var HELPS=["Любимый чай","Музыка","Обнять собаку","Тёплая ванна","Порисовать","Повязать пару рядов","Любимые духи","Позвонить Габриэлю","Прогулка"];
+var TZS=[["Europe/Kaliningrad","Калининград"],["Europe/Moscow","Москва"],["Europe/Samara","Самара"],["Asia/Yekaterinburg","Екатеринбург"],["Asia/Omsk","Омск"],["Asia/Novosibirsk","Новосибирск"],["Asia/Krasnoyarsk","Красноярск"],["Asia/Irkutsk","Иркутск"],["Asia/Yakutsk","Якутск"],["Asia/Vladivostok","Владивосток"]];
+var WD_RU=["пн","вт","ср","чт","пт","сб","вс"],WD_PT=["seg","ter","qua","qui","sex","sáb","dom"];
+
+/* =====================================================================
+   4. ESTADO
+   ===================================================================== */
+var T=dkey();
+function fresh(){return{v:2,profile:"ana",tab:"today",plan:"routine",days:{},enabled:CARES.map(function(c){return c.id}),
+ shared:{mood:true,words:false,cares:false,routine:false,study:true},support:{person:"",pro:""},
+ meet:dkey(addDays(68)),tz:"Europe/Moscow",answers:{},gifts:{ana:[],gab:[]},helps:HELPS.slice(),
+ reminders:{morning:true,water:false,light:false,study:false,evening:false},steps:{ana:0,gab:0},
+ routine:defRoutine(),restDays:[5,6],
+ study:{start:dkey(monday()),offset:0,min:{ana:15,gab:15},log:{ana:{},gab:{}},ex:[]},
+ lastInvite:"",seeded:false}}
+var S=load()||fresh();S.seeded=2;
+if(S.seeded!==2){   /* dias de exemplo, marcados como exemplo e apagáveis no Diário */
+ Object.keys(S.days).forEach(function(k){if(S.days[k].example)delete S.days[k]});
+ (S.study.ex||[]).forEach(function(x){delete S.study.log[x[0]][x[1]]});S.study.ex=[];
+ var sm=[4,3,4,2,3,4,5,4,3,2,4,4,3,5,4,2,3,3,4,5,3,4,2,3,4,4,5,3,4,3];
+ for(var i=sm.length;i>=1;i--){var m=sm[i-1],dt=addDays(-i),k=dkey(dt),c={water:true};
+  if(i%4!==0)c.food=true;if(m>=4||i%6===0)c.light=true;if((m>=4&&i%2===0)||(m===3&&i%4===0))c.move=true;if(m>=3&&i%3===0)c.people=true;if(m<=2&&i%2===0)c.self=true;if(i%5===0)c.good=true;
+  var rt={w1:true};if(m>=3)rt.w4=true;if(m>=4)rt.w9=true;
+  S.days[k]={mood:m,words:[],energy:m>3?"good":m<3?"low":"mid",cares:c,water:2+m,prio:[],rt:rt,good:i%7===1?"Кофе у окна и солнце на снегу":"",example:true};
+  if(wIdx(dt)!==6){if(i%2===0&&!S.study.log.ana[k]){S.study.log.ana[k]=true;S.study.ex.push(["ana",k])}if(i%3!==0&&!S.study.log.gab[k]){S.study.log.gab[k]=true;S.study.ex.push(["gab",k])}}}
+ if(!S.seeded){
+  S.steps={ana:184000,gab:236000};
+  S.answers[dkey(addDays(-1))]={ana:"Твоё голосовое утром, когда ты ещё не спал.",gab:"Sua foto com o cachorrinho. Ri sozinho no trabalho.",example:true};
+  S.gifts.ana.push({ru:"Я думаю о тебе",pt:"Estou pensando em você",example:true});
+ }
+ S.seeded=2;save();
+}
+var ui={range:30,fade:true,layer:null,edit:false,planDay:wIdx(),showAll:false,ex:null,step:0,card:0,flip:false};
+function day(){if(!S.days[T])S.days[T]={mood:0,words:[],energy:"",cares:{},water:0,prio:[],rt:{},note:"",good:"",hard:""};var d=S.days[T];if(!d.rt)d.rt={};if(!d.prio)d.prio=[];if(!d.cares)d.cares={};if(!d.words)d.words=[];return d}
+function ana(){return S.profile==="ana"}
+function L(ru,pt){return ana()?ru:pt}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+/* =====================================================================
+   5. PEÇAS VISUAIS
+   ===================================================================== */
+function ic(d,cls){return '<svg class="ic'+(cls?" "+cls:"")+'" viewBox="0 0 24 24" aria-hidden="true"><path d="'+d+'"/></svg>'}
+var CLOUD="M7 18h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.2A3.5 3.5 0 0 0 7 18z";
+var WEATHER={5:"M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2.5v2M12 19.5v2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M2.5 12h2M19.5 12h2M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4",
+ 4:"M8.2 8.3a3.6 3.6 0 0 1 6.3-1.6M11 2.5v1.6M5.6 4.7l1.1 1.1M3.4 9.6H5M7 19h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.2A3.5 3.5 0 0 0 7 19z",
+ 3:CLOUD,2:"M7 16h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.9 9.2 3.5 3.5 0 0 0 7 16zM10 19.5v.1M14 19.5v.1",
+ 1:"M7 15h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 6.9 8.2 3.5 3.5 0 0 0 7 15zM9 18l-1 3M13 18l-1 3M17 18l-1 3"};
+var I={gear:"M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 4.6V4.5a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 11h.1a2 2 0 1 1 0 4z",
+ heart:"M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z",lock:"M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3",
+ book:"M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM8 7h7M8 11h5",umbrella:"M3 12a9 9 0 0 1 18 0zM12 12v7a2 2 0 0 1-4 0M12 3V2",
+ today:"M12 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM4 20h16M7 17h10",plan:"M5 4h14a1 1 0 0 1 1 1v15H4V5a1 1 0 0 1 1-1zM4 9h16M8 2v4M16 2v4M8 13h3M8 16.5h6",
+ stats:"M5 20v-8M12 20V5M19 20v-5M3 20h18",pause:"M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h8",diary:"M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",sound:"M4 10v4h4l5 4V6L8 10zM16.5 9a4 4 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"};
+
+/* Um ponto de tricô = uma coisa feita. c cuidado, d rotina, z estudo. */
+function st(x,y,c){return '<g class="s'+c+'" transform="translate('+x+' '+y+')"><rect x=".8" width="4.6" height="12" rx="2.3" transform="rotate(-24 3.1 6)"/><rect x="6.6" width="4.6" height="12" rx="2.3" transform="rotate(24 8.9 6)"/></g>'}
+function stitches(k,forGab){
+ var d=S.days[k],a=[];
+ if(d){
+  if(d.ex)a=d.ex.split("");
+  else{
+   if(d.mood)a.push("c");
+   CARES.forEach(function(c){if(d.cares&&d.cares[c.id])a.push("c")});
+   if(d.hard)a.push("c");
+   Object.keys(d.rt||{}).forEach(function(id){if(d.rt[id])a.push("d")});
+   (d.prio||[]).forEach(function(p){if(p.done)a.push("d")});
+  }
+ }
+ if(!(d&&d.ex)&&S.study.log.ana[k])a.push("z");
+ if(S.answers[k]&&S.answers[k].ana&&!S.answers[k].example)a.push("c");
+ if(forGab)a=a.filter(function(c){return c==="c"?S.shared.cares:c==="d"?S.shared.routine:S.shared.study});
+ return a;
+}
+function rowSvg(a,label){return '<svg class="knit" viewBox="0 0 300 16" role="img" aria-label="'+esc(label)+'">'+a.slice(0,23).map(function(c,i){return st(2+i*12.8,2,c)}).join("")+'</svg>'}
+function scarfSvg(forGab){
+ var h="",wd=ana()?WD_RU:WD_PT;
+ for(var i=6;i>=0;i--){var dt=addDays(-i),a=stitches(dkey(dt),forGab),y=4+(6-i)*14;
+  h+='<text x="0" y="'+(y+9.5)+'">'+wd[wIdx(dt)]+'</text>';
+  h+=a.length?a.slice(0,21).map(function(c,n){return st(26+n*12.8,y,c)}).join(""):'<line x1="28" x2="120" y1="'+(y+6)+'" y2="'+(y+6)+'"/><text x="128" y="'+(y+9.5)+'">'+L("ряд отдыха","carreira de descanso")+'</text>';}
+ return '<svg class="knit" viewBox="0 0 300 106" role="img" aria-label="'+L("Шарф недели","Cachecol da semana")+'">'+h+'</svg>';
+}
+function legend(){return '<div class="legend"><span><i style="background:var(--cherry)"></i>'+L("забота о себе","cuidado")+'</span><span><i style="background:var(--dusk)"></i>'+L("дела и режим","rotina")+'</span><span><i style="background:var(--zest)"></i>'+L("учёба","estudo")+'</span></div>'}
+
+var toastEl=document.getElementById("toast"),tt;
+function toast(m){toastEl.textContent=m;toastEl.classList.add("on");clearTimeout(tt);tt=setTimeout(function(){toastEl.classList.remove("on")},2400)}
+function greet(){var h=Math.floor((ana()?herNow():toMin(tzHM(SP)))/60);
+ return ana()?(h<5?"Доброй ночи":h<12?"Доброе утро":h<18?"Добрый день":"Добрый вечер")+", Анастасия":(h<5?"Boa noite":h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+", Gabriel"}
+function threadHtml(){var me=ana()?tzHM(S.tz):tzHM(SP),ot=ana()?tzHM(SP):tzHM(S.tz);
+ var w='<svg viewBox="0 0 120 12" preserveAspectRatio="none" aria-hidden="true"><path d="M0 6C10 0 20 12 30 6S50 0 60 6 80 12 90 6 110 0 120 6"/></svg>';
+ return '<span>'+L("У тебя","Aqui")+' <b>'+me+'</b></span>'+w+'<span class="km">11 500 '+L("км","km")+'</span>'+w+'<span>'+L("У Габриэля","Com ela")+' <b>'+ot+'</b></span>'}
+function header(title){return '<header class="stack" style="gap:14px"><div class="thread" id="thread">'+threadHtml()+'</div><div class="row between" style="align-items:flex-start"><h1>'+esc(title||greet())+'</h1><button class="gear" data-a="layer" data-v="settings" aria-label="'+L("Настройки","Ajustes")+'">'+ic(I.gear)+'</button></div></header>'}
+function daysTo(){return Math.max(0,Math.round((new Date((S.meet||T)+"T12:00:00")-new Date(T+"T12:00:00"))/864e5))}
+
+/* ---- rotina: utilitários ---- */
+function tplOf(idx){return S.restDays.indexOf(idx)>-1?"rest":"work"}
+function blocks(idx){return S.routine[tplOf(idx)].slice().sort(function(a,b){return toMin(a.t)-toMin(b.t)})}
+function blkDone(b,d){return b.study?!!S.study.log.ana[T]:!!(d.rt&&d.rt[b.id])}
+function blkTitle(b){var t=ana()?b.ru:(b.pt||b.ru);if(b.study)t+=" · "+S.study.min.ana+L(" минут"," min");return t}
+/* ---- estudo: utilitários ---- */
+function themeIdx(){var w=Math.round((monday()-new Date(S.study.start+"T12:00:00"))/6048e5);return (((w+S.study.offset)%4)+4)%4}
+function weekKeys(){var m=monday(),a=[];for(var i=0;i<7;i++)a.push(dkey(addDays(i,m)));return a}
+
+/* =====================================================================
+   6. TELAS
+   ===================================================================== */
+function vToday(){
+ var d=day(),low=d.energy==="low",h=header();
+ var g=S.gifts.ana[S.gifts.ana.length-1];
+ if(g&&!g.seen)h+='<div class="gift">'+ic(I.heart)+'<div class="grow"><span class="eyebrow">Габриэль оставил тебе кое-что'+(g.example?" · пример":"")+'</span><p class="disp" style="font-size:20px">'+esc(g.ru)+'</p></div><button class="ghost" data-a="seen" aria-label="Скрыть">×</button></div>';
+ if(lowStreak())h+='<div class="card"><p class="disp" style="font-size:19px;line-height:1.35">Я замечаю, что последние дни были тяжёлыми. Ты не обязана справляться одна. Может, стоит поговорить с близким человеком или специалистом?</p>'+(S.support.person?'<p class="small muted">Твой человек поддержки: <b>'+esc(S.support.person)+'</b></p>':'')+'<button class="btn soft" data-a="invite">Спасибо, я подумаю</button></div>';
+
+ h+='<section class="card"><h2>Как ты сегодня?</h2><div class="moods" role="group" aria-label="Настроение">';
+ MOODS.forEach(function(m){h+='<button class="mood" data-a="mood" data-v="'+m.v+'" aria-pressed="'+(d.mood===m.v)+'">'+ic(WEATHER[m.v])+'<i class="mb'+m.v+'"></i><span>'+m.ru+'</span></button>'});
+ h+='</div>';
+ if(d.mood){
+  h+='<div class="say">'+(d.mood>=4?"Как хорошо. Пусть этот день будет к тебе добрым.":d.mood===3?"Спасибо, что заглянула к себе. Давай сделаем день попроще.":"Я рядом. Сегодня достаточно одного маленького шага.")+'</div>';
+  h+='<div class="stack"><span class="eyebrow">Если хочешь, добавь слова</span><div class="chips">'+WORDS.map(function(w){return '<button class="chip" data-a="word" data-v="'+esc(w[0])+'" aria-pressed="'+(d.words.indexOf(w[0])>-1)+'">'+w[0]+'</button>'}).join("")+'</div></div>';
+  h+='<div class="stack"><span class="eyebrow">Сколько у тебя сегодня сил?</span><div class="seg" role="group">'+[["low","Мало"],["mid","Средне"],["good","Хорошо"]].map(function(e){return '<button data-a="energy" data-v="'+e[0]+'" aria-pressed="'+(d.energy===e[0])+'">'+e[1]+'</button>'}).join("")+'</div></div>';
+  h+='<div class="stack"><label class="eyebrow" for="note">Хочешь что-то рассказать?</label><textarea id="note" data-f="note" rows="2" placeholder="Это только для тебя">'+esc(d.note)+'</textarea></div>';
+ }
+ h+='</section>';
+ if(d.mood&&d.mood<=2)h+=hardBtn();
+
+ /* agora no cronograma */
+ var bl=blocks(wIdx()),now=herNow();if(low&&!ui.showAll)bl=bl.filter(function(b){return b.a});
+ var nx=bl.filter(function(b){return !blkDone(b,d)&&toMin(b.t)>=now-90})[0];
+ h+='<section class="stack"><div class="row between"><h2>По плану</h2><button class="link" data-a="go" data-v="plan">Весь день</button></div>';
+ if(nx){var isNow=toMin(nx.t)<=now;h+='<div class="nowcard"><div><span class="eyebrow">'+(isNow?"сейчас":"дальше")+'</span><div class="when">'+fmtMin(toMin(nx.t))+'</div></div><div class="grow"><div>'+esc(blkTitle(nx))+'</div>'+(nx.us?'<div class="small muted">у Габриэля будет '+fmtMin(toMin(nx.t)+gapMin())+'</div>':'')+'</div><button class="chk" data-a="blk" data-v="'+nx.id+'" aria-label="Готово"></button></div>'}
+ else h+='<div class="nowcard"><div class="grow">На сегодня это всё. Остальное подождёт до завтра.</div></div>';
+ var sp=SPLAN[wIdx()],sd=!!S.study.log.ana[T];
+ h+='<button class="studychip" data-a="go" data-v="study">'+ic(I.book)+'<span class="grow"><b>Португальский · '+sp.ru+'</b><br><span class="small muted">'+(sp.rest?"сегодня отдых":sd?"на сегодня сделано":S.study.min.ana+" минут, когда будет удобно")+'</span></span></button></section>';
+
+ /* cuidados */
+ h+='<section class="stack"><div class="row between"><h2>Маленькая забота</h2><span class="small muted">'+(low?"сегодня маленькие версии":"любой шаг считается")+'</span></div><div class="cares">';
+ CARES.filter(function(c){return S.enabled.indexOf(c.id)>-1}).forEach(function(c){var x="";
+  if(c.id==="water"){var n=d.water||0;x='<span class="water" aria-label="'+n+' стаканов">';for(var i=0;i<8;i++)x+='<i class="'+(i<n?"f":"")+'"></i>';x+='</span>'}
+  h+='<button class="care" data-a="care" data-v="'+c.id+'" aria-pressed="'+!!d.cares[c.id]+'">'+ic(c.ic)+'<span class="t">'+c.ru+'</span>'+(x||'<span class="v">'+(low?c.min:c.full)+'</span>')+'</button>'});
+ h+='</div></section>';
+
+ /* a carreira do dia */
+ var a=stitches(T);
+ h+='<section class="card"><div class="row between"><h2>Ряд этого дня</h2><span class="eyebrow">петля за петлёй</span></div>'+(a.length?rowSvg(a,"Петли за сегодня")+'<p class="small muted">Каждая забота о себе становится петлёй. Ряд не распускается, какой бы длины он ни был.</p>':'<p class="muted">Ряд ещё не начат. Первая петля может быть совсем маленькой: стакан воды.</p>')+legend()+'</section>';
+ if(!(d.mood&&d.mood<=2))h+=hardBtn();
+ return h;
+}
+function hardBtn(){return '<button class="hard" data-a="layer" data-v="hard">'+ic(I.umbrella)+'<span><b>Сегодня тяжёлый день</b><br><span class="small muted">Один маленький шаг и ничего больше</span></span></button>'}
+function lowStreak(){
+ if(S.lastInvite&&(new Date(T)-new Date(S.lastInvite))/864e5<7)return false;
+ for(var i=0;i<5;i++){var x=S.days[dkey(addDays(-i))];if(!x||x.example||!x.mood||x.mood>2)return false}return true}
+
+function vHerDay(){
+ var d=S.days[T]||{},h=header("O dia dela");
+ var g=S.gifts.gab[S.gifts.gab.length-1];
+ if(g&&!g.seen)h+='<div class="gift">'+ic(I.heart)+'<div class="grow"><span class="eyebrow">Ela deixou algo para você</span><p class="disp" style="font-size:20px">'+esc(g.ru)+'</p><p class="small muted">'+esc(g.pt)+'</p></div><button class="ghost" data-a="seen" aria-label="Fechar">×</button></div>';
+ h+='<section class="card"><span class="eyebrow">Como ela está hoje</span>';
+ if(d.mood&&S.shared.mood){var m=MOODS.filter(function(x){return x.v===d.mood})[0];
+  h+='<div class="row">'+ic(WEATHER[d.mood])+'<div><h2>'+m.pt+'</h2>'+(S.shared.words&&d.words&&d.words.length?'<p class="small muted">'+d.words.map(function(w){var f=WORDS.filter(function(x){return x[0]===w})[0];return f?f[1]:w}).join(", ")+'</p>':'')+'</div></div>'}
+ else h+='<p class="muted">Ela ainda não compartilhou o dia de hoje. Tudo bem: às vezes o silêncio também é descanso.</p>';
+ if(d.sig)h+='<div class="say">A Anastasia quer um pouco de carinho.</div>';
+ var a=stitches(T,true);
+ if(a.length)h+='<div class="stack"><span class="eyebrow">A carreira de hoje dela</span>'+rowSvg(a,"Pontos de hoje")+legend()+'</div>';
+ h+='</section>';
+ h+='<section class="stack"><h2>Mandar carinho</h2><p class="small muted">Ela recebe em russo, na tela inicial.</p><div class="quick">'+QUICK_G.map(function(q,i){return '<button data-a="quickg" data-v="'+i+'"><span>'+q[0]+'</span><span>'+q[1]+'</span></button>'}).join("")+'</div></section>';
+ h+='<section class="card"><h2>Como apoiar sem pressionar</h2><ol class="guide">'+["Reaja ao que ela compartilhou, não ao que falta.","Num dia ruim, acolha antes de resolver.","Não peça para ela compartilhar mais. A escolha é dela.","Seja constante, não intenso: bom dia e boa noite todo dia.","Cuide de você também.","Se o humor dela ficar muito baixo por vários dias, incentive com carinho que ela converse com alguém de confiança ou um profissional."].map(function(x){return "<li>"+x+"</li>"}).join("")+'</ol></section>';
+ return h;
+}
+
+function vPlan(){
+ var h=header(L("План","Plano"));
+ h+='<div class="seg" role="group">'+(ana()?[["routine","Режим дня"],["study","Учёба"]]:[["study","Meu estudo"],["routine","Rotina dela"]]).map(function(x){return '<button data-a="plan" data-v="'+x[0]+'" aria-pressed="'+(S.plan===x[0])+'">'+x[1]+'</button>'}).join("")+'</div>';
+ return h+(S.plan==="study"?vStudy():vRoutine());
+}
+function vRoutine(){
+ if(!ana()&&!S.shared.routine)return '<div class="card"><p class="muted">A rotina é dela. Você vê aqui quando ela decidir compartilhar, nos ajustes do perfil dela.</p></div>';
+ var d=day(),h="",wd=ana()?WD_RU:WD_PT,mon=monday(),ti=wIdx(),sel=ui.planDay,isToday=sel===ti,now=herNow(),low=d.energy==="low";
+ h+='<div class="weekstrip" role="group">';
+ for(var i=0;i<7;i++){var dt=addDays(i,mon);h+='<button class="wd'+(tplOf(i)==="rest"?" soft":"")+(i===ti?" today":"")+'" data-a="pday" data-v="'+i+'" aria-pressed="'+(i===sel)+'"><span>'+wd[i]+'</span><b>'+dt.getDate()+'</b><span class="dot"></span></button>'}
+ h+='</div><div class="legend"><span><i style="background:var(--dusk);border-radius:50%"></i>'+L("обычный день","dia comum")+'</span><span><i style="background:var(--zest);border-radius:50%"></i>'+L("мягкий день","dia leve")+'</span>'+(ana()?'<span><span class="anchor" style="margin:0"></span>якорь дня</span>':'')+'</div>';
+
+ if(ui.edit&&ana()){
+  var tp=tplOf(sel);
+  h+='<section class="card"><div class="row between"><h2>'+(tp==="rest"?"Мягкий день":"Обычный день")+'</h2><button class="btn" style="padding:9px 16px" data-a="edit">Готово</button></div><p class="small muted">Время примерное. Меняй, как удобно тебе, а не «как правильно».</p><div>';
+  blocks(sel).forEach(function(b){h+='<div class="edit"><input type="time" value="'+esc(b.t)+'" data-f="bt" data-id="'+b.id+'" aria-label="Время"><input type="text" value="'+esc(b.ru)+'" data-f="bx" data-id="'+b.id+'" maxlength="70" aria-label="Что"><div class="tools"><button class="chip" data-a="banchor" data-v="'+b.id+'" aria-pressed="'+!!b.a+'">якорь дня</button><button class="ghost" data-a="bdel" data-v="'+b.id+'">Убрать</button></div></div>'});
+  h+='</div><button class="btn soft" data-a="badd">+ Добавить в режим</button></section>';
+  h+='<section class="card"><h3>Какие дни мягкие</h3><div class="chips">'+WD_RU.map(function(w,i){return '<button class="chip" data-a="rest" data-v="'+i+'" aria-pressed="'+(S.restDays.indexOf(i)>-1)+'">'+w+'</button>'}).join("")+'</div></section>';
+  return h;
+ }
+
+ var bl=blocks(sel),hidden=0;
+ if(ana()&&isToday&&low&&!ui.showAll){hidden=bl.filter(function(b){return !b.a}).length;bl=bl.filter(function(b){return b.a})}
+ var cur=null;if(isToday)bl.forEach(function(b){if(toMin(b.t)<=now)cur=b.id});
+ h+='<section class="card"><div class="row between"><h2>'+(isToday?L("Сегодня","Hoje"):L(["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"][sel],["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"][sel]))+'</h2>'+(ana()?'<button class="link" data-a="edit">Изменить</button>':'')+'</div>';
+ if(hidden)h+='<p class="small muted">Сегодня мало сил, поэтому я оставила только якоря. <button class="link" data-a="showall" style="padding:0">Показать всё</button></p>';
+ h+='<div class="tl">';
+ bl.forEach(function(b){var dn=ana()&&isToday&&blkDone(b,d);
+  h+='<div class="blk'+(dn?" done":"")+(b.id===cur?" now":"")+'"><span class="tm">'+fmtMin(toMin(b.t))+'</span><div class="tx"><span>'+(b.a?'<span class="anchor"></span>':'')+esc(blkTitle(b))+'</span>'+
+   (ana()?(b.us?'<div class="sub">у Габриэля '+fmtMin(toMin(b.t)+gapMin())+'</div>':''):'<div class="sub">aqui '+fmtMin(toMin(b.t)+gapMin())+'</div>')+'</div>'+
+   (ana()&&isToday?'<button class="chk'+(dn?" on":"")+'" data-a="blk" data-v="'+b.id+'" aria-label="Готово" aria-pressed="'+dn+'"></button>':'<span></span>')+'</div>'});
+ h+='</div><p class="small muted">'+L("Время примерное. Пропущенное не догоняем: просто идём дальше.","Os horários são aproximados, no fuso dela. Nada aqui fica como atrasado.")+'</p></section>';
+
+ if(ana()&&isToday){var max=low?1:3;
+  h+='<section class="card"><div><h2>Важное сегодня</h2><p class="small muted">Что важно сегодня? Хватит и одного.</p></div><div class="stack" style="gap:8px">';
+  d.prio.forEach(function(p,i){h+='<div class="task'+(p.done?" done":"")+'"><button class="chk'+(p.done?" on":"")+'" data-a="pdone" data-v="'+i+'" aria-label="Готово"></button><span class="tx">'+esc(p.t)+'</span>'+(p.done?'':'<button class="ghost" data-a="pmove" data-v="'+i+'">на завтра</button>')+'</div>'});
+  h+='</div>'+(d.prio.length<max?'<div class="addrow"><input type="text" id="newp" placeholder="'+(d.prio.length?"Ещё одно дело":"Одно важное дело")+'" maxlength="80"><button class="btn" data-a="padd" aria-label="Добавить">+</button></div>':'<p class="small muted">'+(low?"Сегодня хватит одного. Остальное подождёт.":"Трёх дел достаточно. Остальное подождёт.")+'</p>')+'</section>'}
+ return h;
+}
+function vStudy(){
+ var me=S.profile,th=THEMES[themeIdx()],log=S.study.log[me],keys=weekKeys(),ti=wIdx(),wd=ana()?WD_RU:WD_PT,sp=SPLAN[ti],h="";
+ h+='<section class="stack"><span class="eyebrow">'+L("Португальский для жизни в Бразилии","Russo para a vida com ela")+'</span><div class="row between"><h2>'+L("Неделя ","Semana ")+(themeIdx()+1)+" · "+L(th.ru,th.pt)+'</h2></div><div class="row between"><button class="ghost" data-a="theme" data-v="-1" style="padding-left:0">← '+L("прошлая тема","tema anterior")+'</button><button class="ghost" data-a="theme" data-v="1">'+L("следующая тема","próximo tema")+' →</button></div></section>';
+
+ h+='<section class="card"><div class="row between"><span class="eyebrow">'+L("Сегодня","Hoje")+' · '+wd[ti]+'</span><span class="small muted">'+(sp.rest?"":S.study.min[me]+L(" минут"," min"))+'</span></div><h2>'+L(sp.ru,sp.pt)+'</h2><p class="muted">'+L(sp.dru,sp.dpt)+'</p>'+(sp.rest?'':'<button class="btn'+(log[T]?" soft":"")+'" data-a="sdone" data-v="'+T+'">'+(log[T]?L("Сделано. Можно отдыхать.","Feito. Pode descansar."):L("Готово на сегодня","Feito por hoje"))+'</button>')+'</section>';
+
+ var w=th.w[ui.card%th.w.length],front=ana()?w.p:(w.rm||w.r),hint=ana()?w.s:w.t,back=ana()?w.r:w.p;
+ h+='<section class="stack"><div class="row between"><h2>'+L("Карточки недели","Cartões da semana")+'</h2><span class="small muted num">'+(ui.card%th.w.length+1)+" / "+th.w.length+'</span></div>'+
+  '<button class="flash" data-a="flip" aria-live="polite">'+(ui.flip?'<span class="eyebrow">'+L("по-русски","em português")+'</span><span class="w">'+esc(back)+'</span><span class="p">'+esc(front)+'</span>':'<span class="eyebrow">'+L("по-португальски","em russo")+'</span><span class="w">'+esc(front)+'</span><span class="p">['+esc(hint)+']</span><span class="tiny muted">'+L("нажми, чтобы увидеть перевод","toque para ver a tradução")+'</span>')+'</button>'+
+  '<div class="row"><button class="btn soft" data-a="card" data-v="-1" aria-label="'+L("Назад","Anterior")+'">←</button><button class="btn soft grow" data-a="speak" style="display:flex;justify-content:center;gap:8px;align-items:center">'+ic(I.sound)+L("Послушать","Ouvir")+'</button><button class="btn soft" data-a="card" data-v="1" aria-label="'+L("Дальше","Próximo")+'">→</button></div></section>';
+
+ h+='<section class="card"><h2>'+L("Расписание недели","Cronograma da semana")+'</h2><div>';
+ SPLAN.forEach(function(p,i){var k=keys[i],fut=i>ti;
+  h+='<div class="sday'+(i===ti?" today":"")+'"><span class="d">'+wd[i]+'</span><div><div>'+L(p.ru,p.pt)+'</div><div class="small muted">'+(p.rest?L("ничего не нужно","não precisa de nada"):S.study.min[me]+L(" минут"," min"))+'</div></div>'+(p.rest?'<span></span>':'<button class="chk'+(log[k]?" on":"")+'" data-a="sdone" data-v="'+k+'"'+(fut?" disabled":"")+' aria-label="'+L("Готово","Feito")+'" aria-pressed="'+!!log[k]+'"></button>')+'</div>'});
+ h+='</div><p class="small muted">'+L("Шесть маленьких шагов и свободное воскресенье. Пропущенный день не догоняем.","Seis passos pequenos e o domingo livre. Dia perdido não se recupera: segue-se em frente.")+'</p>';
+ h+='<div class="stack" style="gap:6px"><span class="eyebrow">'+L("Сколько минут в день","Minutos por dia")+'</span><div class="seg">'+[10,15,25].map(function(n){return '<button data-a="smin" data-v="'+n+'" aria-pressed="'+(S.study.min[me]===n)+'">'+n+'</button>'}).join("")+'</div></div></section>';
+ return h;
+}
+
+function vUs(){
+ var qi=Math.floor(new Date(T+"T12:00:00")/864e5)%QUESTIONS.length,q=QUESTIONS[qi],a=S.answers[T]||{},mine=ana()?a.ana:a.gab,theirs=ana()?a.gab:a.ana,h=header(L("Мы","Nós"));
+ h+='<section class="card"><span class="eyebrow">'+L("Вопрос дня","Pergunta do dia")+'</span><p class="q">'+(ana()?q[0]:q[1])+'</p>';
+ if(mine){h+='<div class="answer"><span class="eyebrow">'+L("Твой ответ","Sua resposta")+'</span><br>'+esc(mine)+'</div>'+(theirs?'<div class="answer his"><span class="eyebrow">'+L("Ответ Габриэля","Resposta dela")+'</span><br>'+esc(theirs)+'</div>':'<div class="locked">'+ic(I.lock)+L("Габриэль ещё не ответил. Его ответ появится здесь.","Ela ainda não respondeu. A resposta aparece aqui.")+'</div>')}
+ else h+='<textarea id="ans" rows="3" placeholder="'+L("Напиши, как чувствуешь","Escreva do seu jeito")+'"></textarea><button class="btn" data-a="answer">'+L("Ответить","Responder")+'</button>'+(theirs?'<div class="locked">'+ic(I.lock)+L("Габриэль уже ответил. Ответь, чтобы увидеть.","Ela já respondeu. Responda para ver.")+'</div>':'');
+ var y=S.answers[dkey(addDays(-1))];
+ if(y&&y.ana&&y.gab)h+='<details><summary class="small muted" style="cursor:pointer">'+L("Вчерашние ответы","Respostas de ontem")+(y.example?" · "+L("пример","exemplo"):"")+'</summary><div class="stack" style="margin-top:10px;gap:6px"><p class="small"><b>'+L("Ты","Ela")+':</b> '+esc(y.ana)+'</p><p class="small"><b>'+L("Габриэль","Você")+':</b> '+esc(y.gab)+'</p></div></details>';
+ h+='</section>';
+
+ var km=Math.round((S.steps.ana+S.steps.gab)*0.00075),pct=Math.min(100,km/11500*100);
+ h+='<section class="card"><div class="row between" style="align-items:flex-end"><div><span class="eyebrow">'+L("До встречи","Até o reencontro")+'</span><div class="big">'+daysTo()+'</div><span class="small muted">'+L("дней","dias")+'</span></div><div style="text-align:right"><span class="eyebrow">'+L("Шаги вместе","Passos juntos")+'</span><div class="disp num" style="font-size:26px">'+km.toLocaleString("ru-RU")+' '+L("км","km")+'</div><span class="small muted">'+L("из 11 500","de 11 500")+'</span></div></div><div class="road"><i style="width:'+pct.toFixed(1)+'%"></i><b style="left:'+pct.toFixed(1)+'%"></b></div><div class="row between"><span class="small muted">'+L("Наши прогулки складываются в дорогу друг к другу.","As caminhadas dos dois somam um caminho até o outro.")+'</span><button class="link" data-a="steps">+ '+L("прогулка","caminhada")+'</button></div></section>';
+
+ var th=THEMES[themeIdx()],keys=weekKeys();
+ function dots(who){return keys.slice(0,6).map(function(k){return S.study.log[who][k]?"z":""})}
+ function mini(who){var a=dots(who).filter(Boolean);return a.length?'<svg class="knit" style="max-width:150px" viewBox="0 0 80 16" aria-hidden="true">'+a.map(function(c,i){return st(2+i*12.8,2,c)}).join("")+'</svg>':'<span class="small muted">'+L("неделя только начинается","a semana está começando")+'</span>'}
+ h+='<section class="card"><span class="eyebrow">'+L("Учимся вместе","Estudando juntos")+'</span><h2>'+L(th.ru,th.pt)+'</h2><div class="row between"><span>'+L("Ты · португальский","Ela · português")+'</span>'+(ana()||S.shared.study?mini("ana"):'<span class="small muted">só dela</span>')+'</div><div class="row between"><span>'+L("Габриэль · русский","Você · russo")+'</span>'+mini("gab")+'</div><p class="small muted">'+L("Одна тема на двоих: ты учишь его язык, он учит твой.","Um tema para os dois: ela aprende a sua língua, você a dela.")+'</p></section>';
+
+ h+='<section class="stack"><h2>'+L("Отправить тепло","Mandar carinho")+'</h2><div class="quick">'+(ana()?QUICK_A.map(function(x,i){return '<button data-a="quicka" data-v="'+i+'"><span>'+x[0]+'</span><span>'+x[1]+'</span></button>'}):QUICK_G.map(function(x,i){return '<button data-a="quickg" data-v="'+i+'"><span>'+x[0]+'</span><span>'+x[1]+'</span></button>'})).join("")+'</div></section>';
+ h+='<section class="card"><h2>'+L("Что делать вместе","O que fazer juntos")+'</h2><div class="acts">'+ACTS.map(function(x){return '<div class="act"><span class="n">'+(ana()?x[0]:x[1])+'</span><span class="f">'+(ana()?x[4]:x[5])+'</span><span class="d">'+(ana()?x[2]:x[3])+'</span></div>'}).join("")+'</div></section>';
+ return h;
+}
+
+var breathT=null;
+function vPause(){
+ var h=header(L("Передышка","Pausa"));
+ if(!ui.ex)return h+'<p class="muted">'+L("Можно остановиться в любой момент. Ничего не нужно заканчивать.","Dá para parar a qualquer momento. Nada precisa ser concluído.")+'</p><div class="stack" style="gap:8px">'+EX.map(function(e){return '<button class="exbtn" data-a="ex" data-v="'+e.id+'"><span class="n">'+L(e.ru,e.pt)+'</span><span class="m num">'+e.m+L(" мин"," min")+'</span><span class="d">'+L(e.d[0],e.d[1])+'</span></button>'}).join("")+'</div>';
+ var e=EX.filter(function(x){return x.id===ui.ex})[0];
+ h+='<section class="card"><div class="row between"><h2>'+L(e.ru,e.pt)+'</h2><button class="ghost" data-a="exit">'+L("Закрыть","Fechar")+'</button></div>';
+ if(e.id==="b46")h+='<div class="orbw"><div class="orb" id="orb"></div></div><p class="phase" id="phase">'+L("Нажми, когда будешь готова","Toque quando quiser começar")+'</p><button class="btn wide" id="bgo" data-a="breath">'+L("Начать","Começar")+'</button>';
+ else if(e.id==="helps")h+='<div class="chips">'+S.helps.map(function(x,i){return '<button class="chip" data-a="hdel" data-v="'+i+'" aria-label="'+L("Убрать","Remover")+" "+esc(x)+'">'+esc(x)+' ×</button>'}).join("")+'</div><div class="addrow"><input type="text" id="newh" placeholder="'+L("Что ещё тебе помогает?","O que mais te ajuda?")+'" maxlength="40"><button class="btn" data-a="hadd" aria-label="+">+</button></div><p class="small muted">'+L("Когда сил мало, выбери отсюда что-то одно.","Quando a energia estiver baixa, escolha uma coisa daqui.")+'</p>';
+ else{var s=e.steps[ui.step];h+='<span class="small muted num">'+(ui.step+1)+" / "+e.steps.length+'</span><p class="q">'+L(s[0],s[1])+'</p>'+(e.input?'<textarea id="exin" rows="2" aria-label="'+L("Твой ответ","Sua resposta")+'"></textarea>':'')+'<button class="btn wide" data-a="next">'+(ui.step<e.steps.length-1?L("Дальше","Próximo"):L("Готово","Pronto"))+'</button>'}
+ return h+'</section>';
+}
+function runBreath(){
+ var orb=document.getElementById("orb"),ph=document.getElementById("phase"),b=document.getElementById("bgo"),n=0;if(b)b.hidden=true;
+ (function cyc(){if(!orb||!document.body.contains(orb))return;
+  if(n>=6){orb.className="orb";ph.textContent=L("Хорошо. Ты подарила себе минуту.","Muito bem. Você se deu um minuto.");if(ana()){day().cares.breath=true;save()}return}
+  n++;orb.className="orb in";ph.textContent=L("Вдох… 4","Inspire… 4");
+  breathT=setTimeout(function(){orb.className="orb out";ph.textContent=L("Выдох… 6","Expire… 6");breathT=setTimeout(cyc,6000)},4000)})();
+}
+
+function vDiary(){
+ var h=header(L("Дневник","Diário"));
+ if(!ana()&&!S.shared.mood)return h+'<div class="card"><p class="muted">O diário é dela. Você vê aqui só o que ela escolher compartilhar.</p></div>';
+ if(Object.keys(S.days).some(function(k){return S.days[k].example}))h+='<div class="notex"><span>'+L("Здесь пока примеры, чтобы показать, как всё будет выглядеть.","Por enquanto há dias de exemplo, para mostrar como fica.")+'</span><button class="ghost" data-a="clearex">'+L("Убрать","Limpar")+'</button></div>';
+ var n=new Date(),y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1),off=wIdx(first),dim=new Date(y,m+1,0).getDate(),wd=ana()?WD_RU:WD_PT;
+ h+='<section class="card"><div class="row between"><h2>'+L("Мозаика месяца","Mosaico do mês")+'</h2><span class="small muted">'+first.toLocaleDateString(ana()?"ru-RU":"pt-BR",{month:"long"})+'</span></div><div class="mosaic">'+wd.map(function(w){return '<span class="h">'+w+'</span>'}).join("");
+ for(var i=0;i<off;i++)h+='<span></span>';
+ for(var dd=1;dd<=dim;dd++){var k=dkey(new Date(y,m,dd)),x=S.days[k],mo=x&&x.mood;h+='<span class="tile'+(mo?" f t"+mo:"")+(k===T?" now":"")+(k>T?" fut":"")+'">'+dd+'</span>'}
+ h+='</div><div class="legend">'+MOODS.slice().reverse().map(function(mm){return '<span><i class="mb'+mm.v+'"></i>'+L(mm.ru,mm.pt)+'</span>'}).join("")+'</div><p class="small muted">'+L("Без оценок. Каждый день просто добавляет свой цвет, а пустая клетка означает тихий день.","Sem notas. Cada dia só acrescenta a sua cor, e um quadrado vazio é um dia quieto.")+'</p></section>';
+ if(ana()||S.shared.cares||S.shared.routine||S.shared.study)h+='<section class="card"><div class="row between"><h2>'+L("Шарф недели","Cachecol da semana")+'</h2><span class="eyebrow">'+L("7 дней","7 dias")+'</span></div>'+scarfSvg(!ana())+legend()+'<p class="small muted">'+L("У каждого ряда своя длина. Короткие ряды тоже держат шарф.","Cada carreira tem o seu tamanho. As curtas também seguram o cachecol.")+'</p></section>';
+ var keys=Object.keys(S.days).filter(function(k){return S.days[k].mood}).sort().reverse().slice(0,10);
+ h+='<section class="card"><h2>'+L("Записи","Registros")+'</h2>';
+ if(!keys.length)h+='<p class="muted">'+L("Здесь пока тихо. И это нормально.","Aqui está quietinho. E está tudo bem.")+'</p>';
+ keys.forEach(function(k){var x=S.days[k],mm=MOODS.filter(function(z){return z.v===x.mood})[0],dt=new Date(k+"T12:00:00");
+  h+='<div class="entry"><div class="row between"><span class="row">'+ic(WEATHER[x.mood])+'<b>'+L(mm.ru,mm.pt)+'</b></span><span class="small muted">'+dt.toLocaleDateString(ana()?"ru-RU":"pt-BR",{day:"numeric",month:"long"})+(x.example?' <span class="badge">'+L("пример","exemplo")+'</span>':'')+'</span></div>'+(ana()&&x.note?'<p class="small">'+esc(x.note)+'</p>':'')+(ana()&&x.good?'<p class="small muted">Хорошее: '+esc(x.good)+'</p>':'')+'</div>'});
+ return h+'</section>';
+}
+
+/* ---- resultados: o que os dias mostram, sem nota ---- */
+function f1(n){return n.toFixed(1).replace(".",",")}
+function mean(a){return a.reduce(function(x,y){return x+y},0)/a.length}
+function vStats(){
+ var h=header(L("Итоги","Resumo"));
+ if(!ana()&&!S.shared.mood)return h+'<div class="card"><p class="muted">Os resultados são dela. Você vê aqui só o que ela escolher compartilhar.</p></div>';
+ var N=ui.range,keys=[],i;for(i=N-1;i>=0;i--)keys.push(dkey(addDays(-i)));
+ var rec=keys.filter(function(k){return S.days[k]&&S.days[k].mood}),canCare=ana()||S.shared.cares,loc=ana()?"ru-RU":"pt-BR";
+ function dlabel(k){return new Date(k+"T12:00:00").toLocaleDateString(loc,{day:"numeric",month:"short"})}
+ function mname(v){var m=MOODS.filter(function(x){return x.v===v})[0];return L(m.ru,m.pt)}
+ h+='<p class="muted">'+L("Это не оценка, а наблюдение: какими были дни и что тебе помогает.","Não é nota, é observação: como foram os dias e o que costuma ajudar.")+'</p>';
+ h+='<div class="seg" role="group" aria-label="'+L("Период","Período")+'">'+[7,30,90].map(function(n){return '<button data-a="range" data-v="'+n+'" aria-pressed="'+(N===n)+'">'+n+L(" дней"," dias")+'</button>'}).join("")+'</div>';
+ if(rec.some(function(k){return S.days[k].example}))h+='<div class="notex"><span>'+L("Сейчас здесь дни-примеры, чтобы показать графики.","Por enquanto os gráficos usam dias de exemplo.")+'</span><button class="ghost" data-a="clearex">'+L("Убрать","Limpar")+'</button></div>';
+ if(!rec.length)return h+'<div class="card"><h2>'+L("Здесь пока тихо","Ainda está quietinho")+'</h2><p class="muted">'+L("Итоги появятся, когда ты отметишь настроение хотя бы пару дней. Здесь будет видно, сколько было светлых дней, как менялось настроение и что тебе помогает.","Os resultados aparecem depois de alguns dias de registro: quantos dias foram leves, como o humor mudou e o que ajuda.")+'</p></div>';
+
+ var moods=rec.map(function(k){return S.days[k].mood}),good=moods.filter(function(m){return m>=4}).length,avg=mean(moods);
+ h+='<section class="card"><span class="eyebrow">'+L("Светлые дни","Dias leves")+'</span><div class="row" style="align-items:flex-end;gap:14px"><span class="hero">'+good+'</span><p class="grow" style="padding-bottom:6px">'+L("столько дней тебе было неплохо или светло на душе. Всего отмечено дней: "+rec.length+".","dias em que ela esteve bem ou leve por dentro. Dias registrados: "+rec.length+".")+'</p></div><div class="tiles">';
+ h+='<div class="stat"><b>'+mname(Math.round(avg))+'</b><span>'+L("настроение в среднем","humor em média")+' · '+f1(avg)+L(" из 5"," de 5")+'</span></div>';
+ if(canCare){var sts=rec.map(function(k){return stitches(k,!ana()).length});h+='<div class="stat"><b>'+f1(mean(sts))+'</b><span>'+L("петель в день в среднем","pontos por dia, em média")+'</span></div>';
+  var wat=rec.map(function(k){return S.days[k].water||0}).filter(Boolean);if(wat.length)h+='<div class="stat"><b>'+f1(mean(wat))+'</b><span>'+L("стаканов воды в день","copos de água por dia")+'</span></div>'}
+ if(ana()||S.shared.study){var sd=keys.filter(function(k){return S.study.log.ana[k]}).length;h+='<div class="stat"><b>'+sd+'</b><span>'+L("дней с португальским","dias de português")+'</span></div>'}
+ h+='</div></section>';
+
+ /* linha: média móvel de 7 dias; pontos: cada dia */
+ var X0=30,X1=312,Y5=16,Y1=112,big=N<=30;
+ function x(ix){return N===1?(X0+X1)/2:X0+ix*(X1-X0)/(N-1)}
+ function y(m){return Y1-(m-1)/4*(Y1-Y5)}
+ var g="",path="",pen=false,dots="";
+ [5,3,1].forEach(function(m){g+='<line class="grid" x1="'+X0+'" x2="'+X1+'" y1="'+y(m)+'" y2="'+y(m)+'"/><g transform="translate(4 '+(y(m)-8)+') scale(.66)"><path class="gl" d="'+WEATHER[m]+'"/></g>'});
+ keys.forEach(function(k,ix){var w=[];for(var j=Math.max(0,ix-6);j<=ix;j++){var d=S.days[keys[j]];if(d&&d.mood)w.push(d.mood)}
+  if(w.length){path+=(pen?"L":"M")+x(ix).toFixed(1)+" "+y(mean(w)).toFixed(1);pen=true}
+  var dd=S.days[k];if(dd&&dd.mood)dots+='<circle class="dot fm'+dd.mood+'" cx="'+x(ix).toFixed(1)+'" cy="'+y(dd.mood)+'" r="'+(big?4:2.6)+'" stroke-width="'+(big?2:1)+'"/><circle cx="'+x(ix).toFixed(1)+'" cy="'+y(dd.mood)+'" r="9" fill="transparent" data-tip="'+dlabel(k)+' · '+mname(dd.mood)+'"/>'});
+ h+='<section class="card"><h2>'+L("Как менялось настроение","Como o humor mudou")+'</h2><svg class="chart" viewBox="0 0 320 132" role="img" aria-label="'+L("Настроение по дням","Humor por dia")+'">'+g+'<path class="avg" d="'+path+'"/>'+dots+'<text x="'+X0+'" y="128">'+dlabel(keys[0])+'</text><text x="'+X1+'" y="128" text-anchor="end">'+L("сегодня","hoje")+'</text></svg><div class="legend"><span><i class="mb4" style="border-radius:50%"></i>'+L("точка — один день","cada ponto é um dia")+'</span><span><span class="lineleg"></span>'+L("линия — среднее за 7 дней","a linha é a média de 7 dias")+'</span></div><p class="small muted">'+L("Отдельный тяжёлый день почти не двигает линию. Смотри на неё, а не на точки.","Um dia pesado isolado quase não mexe na linha. Vale olhar para ela, não para os pontos.")+'</p></section>';
+
+ /* quantos dias em cada estado */
+ var cnt={1:0,2:0,3:0,4:0,5:0};moods.forEach(function(m){cnt[m]++});var mx=Math.max.apply(null,MOODS.map(function(m){return cnt[m.v]}));
+ h+='<section class="card"><h2>'+L("Какими были дни","Como foram os dias")+'</h2><div class="bars">'+MOODS.map(function(m){return '<span>'+L(m.ru,m.pt)+'</span><span data-tip="'+L(m.ru,m.pt)+': '+cnt[m.v]+'"><i class="b mb'+m.v+'" style="display:block;width:'+(cnt[m.v]/mx*100).toFixed(1)+'%'+(cnt[m.v]?'':';visibility:hidden')+'"></i></span><span class="n">'+cnt[m.v]+'</span>'}).join("")+'</div></section>';
+
+ /* média por dia da semana */
+ var ws=[[],[],[],[],[],[],[]];rec.forEach(function(k){ws[wIdx(new Date(k+"T12:00:00"))].push(S.days[k].mood)});
+ var wa=ws.map(function(a){return a.length?mean(a):0}),best=-1;wa.forEach(function(v,ix){if(v&&(best<0||v>wa[best]))best=ix});
+ var filled=wa.filter(Boolean).length,wd=ana()?WD_RU:WD_PT,full=ana()?["понедельник","вторник","среда","четверг","пятница","суббота","воскресенье"]:["segunda","terça","quarta","quinta","sexta","sábado","domingo"];
+ if(filled>=3){h+='<section class="card"><h2>'+L("Дни недели","Dias da semana")+'</h2><div><div class="cols">'+wa.map(function(v,ix){return '<div class="col'+(ix===best?" best":"")+'"'+(v?' data-tip="'+full[ix]+': '+f1(v)+' · '+ws[ix].length+L(" дн."," dia(s)")+'"':'')+'>'+(ix===best?'<span>'+f1(v)+'</span>':'')+(v?'<i style="height:'+(v/5*82).toFixed(1)+'%"></i>':'')+'</div>'}).join("")+'</div><div class="collab" style="margin-top:6px">'+wd.map(function(w){return '<span>'+w+'</span>'}).join("")+'</div></div><p class="small muted">'+L("Среднее настроение по дням недели, от 1 до 5. Самый лёгкий день: "+full[best]+".","Humor médio por dia da semana, de 1 a 5. O dia mais leve: "+full[best]+".")+'</p></section>'}
+
+ /* o que costuma ajudar: humor médio nos dias com o cuidado menos nos dias sem */
+ if(canCare){var hp=[];CARES.forEach(function(c){var a=[],b=[];rec.forEach(function(k){(S.days[k].cares&&S.days[k].cares[c.id]?a:b).push(S.days[k].mood)});if(a.length>=3&&b.length>=3){var df=mean(a)-mean(b);if(df>=0.2)hp.push({c:c,d:df,n:a.length})}});
+  hp.sort(function(p,q){return q.d-p.d});hp=hp.slice(0,4);
+  h+='<section class="card"><h2>'+L("Что тебе помогает","O que costuma ajudar")+'</h2>';
+  if(hp.length)h+='<div class="bars">'+hp.map(function(o){return '<span>'+L(o.c.ru,o.c.pt)+'</span><span data-tip="'+o.n+L(" дн. с этой заботой"," dia(s) com esse cuidado")+'"><i class="b" style="display:block;background:var(--cherry);width:'+(o.d/hp[0].d*100).toFixed(1)+'%"></i></span><span class="n">+'+f1(o.d)+'</span>'}).join("")+'</div><p class="small muted">'+L("На столько выше было настроение в дни с этой заботой, чем в дни без неё (по шкале от 1 до 5). Это наблюдение, а не правило: в хорошие дни и заботиться о себе легче.","É quanto o humor ficou mais alto nos dias com esse cuidado em relação aos dias sem ele (escala de 1 a 5). É uma observação, não uma regra: em dias bons também é mais fácil se cuidar.")+'</p>';
+  else h+='<p class="muted">'+L("Пока мало дней, чтобы увидеть связь. Нужно хотя бы по три дня с заботой и без неё.","Ainda há poucos dias para ver uma relação. São precisos ao menos três dias com o cuidado e três sem.")+'</p>';
+  h+='</section>'}
+
+ h+='<details class="card"><summary style="cursor:pointer">'+L("Показать цифры таблицей","Ver os números em tabela")+'</summary><table class="t"><tr><th>'+L("Состояние","Estado")+'</th><th>'+L("Дней","Dias")+'</th></tr>'+MOODS.map(function(m){return '<tr><td>'+L(m.ru,m.pt)+'</td><td>'+cnt[m.v]+'</td></tr>'}).join("")+'<tr><th>'+L("День недели","Dia da semana")+'</th><th>'+L("Среднее","Média")+'</th></tr>'+wa.map(function(v,ix){return '<tr><td>'+full[ix]+'</td><td>'+(v?f1(v):"·")+'</td></tr>'}).join("")+'</table></details>';
+ return h;
+}
+
+/* ---- camadas: dia difícil e ajustes ---- */
+function lHard(){var d=day();
+ return '<div class="in"><span class="eyebrow">Сегодня тяжёлый день</span><h1>Ничего не нужно доказывать. Сегодня мы просто бережём тебя.</h1><p class="muted">Выбери одно. Больше ничего не нужно.</p><div class="choice">'+["Стакан воды","Тёплый душ","5 минут у окна","Просто полежать под пледом"].map(function(x){return '<button data-a="hpick" data-v="'+x+'" aria-pressed="'+(d.hard===x)+'">'+x+'</button>'}).join("")+'</div><button class="btn rose wide" data-a="signal">'+(d.sig?"Габриэль знает. Он рядом.":"Дать Габриэлю знать, что мне нужна поддержка")+'</button>'+
+ '<div class="card"><span class="eyebrow">Если совсем тяжело</span>'+(S.support.person?'<p>Твой человек поддержки: <b>'+esc(S.support.person)+'</b></p>':'<p class="muted small">В настройках можно вписать человека, которому можно написать в трудный момент.</p>')+(S.support.pro?'<p>Твой специалист: <b>'+esc(S.support.pro)+'</b></p>':'')+'<p class="small muted">Если ты в опасности или боишься за себя, звони в экстренные службы: 112.</p></div><button class="btn soft wide" data-a="close">Ты прожила этот день. Это уже много.</button></div>'}
+function lSettings(){
+ var h='<div class="in"><div class="row between"><h1>'+L("Настройки","Ajustes")+'</h1><button class="btn soft" data-a="close">'+L("Закрыть","Fechar")+'</button></div>';
+ h+='<div class="stack"><span class="eyebrow">'+L("Кто пользуется","Quem está usando")+'</span><div class="profiles"><button data-a="prof" data-v="ana" aria-pressed="'+ana()+'"><b>Анастасия</b><span class="small muted">русский</span></button><button data-a="prof" data-v="gab" aria-pressed="'+!ana()+'"><b>Gabriel</b><span class="small muted">português</span></button></div></div>';
+ if(ana()){
+  h+='<section class="card"><div><h2>Что видит Габриэль</h2><p class="small muted">Делиться — это подарок, а не обязанность. Пока не включишь, это видишь только ты.</p></div><div>'+[["mood","Настроение дня"],["words","Слова о чувствах"],["cares","Маленькая забота"],["routine","Режим дня и дела"],["study","Учёба"]].map(function(x){return '<div class="set"><span>'+x[1]+'</span><button class="switch" role="switch" data-a="share" data-v="'+x[0]+'" aria-checked="'+!!S.shared[x[0]]+'" aria-label="'+x[1]+'"></button></div>'}).join("")+'<div class="set"><span>Записи «Хочешь рассказать?»</span><span class="small muted">всегда только твои</span></div></div></section>';
+  h+='<section class="card"><h2>О чём заботиться каждый день</h2><div class="chips">'+CARES.map(function(c){return '<button class="chip" data-a="en" data-v="'+c.id+'" aria-pressed="'+(S.enabled.indexOf(c.id)>-1)+'">'+c.ru+'</button>'}).join("")+'</div></section>';
+  h+='<section class="card"><h2>Напоминания</h2><div>'+[["morning","Утро · Доброе утро. Как ты сегодня?"],["water","Вода · Может, стаканчик воды?"],["light","Свет · Пока светло, выглянешь на пару минут?"],["study","Учёба · Несколько минут португальского?"],["evening","Вечер · Вспомнить одну хорошую вещь"]].map(function(x){return '<div class="set"><span class="small">'+x[1]+'</span><button class="switch" role="switch" data-a="rem" data-v="'+x[0]+'" aria-checked="'+!!S.reminders[x[0]]+'" aria-label="'+x[1]+'"></button></div>'}).join("")+'</div><p class="small muted">Напоминания начнут приходить, когда приложение будет установлено на iPhone.</p></section>';
+  h+='<section class="card"><div><h2>Поддержка</h2><p class="small muted">Ты не обязана справляться одна. Впиши тех, кому можно написать в трудный момент.</p></div><label class="eyebrow" for="sp1">Мой человек поддержки</label><input type="text" id="sp1" data-f="sperson" value="'+esc(S.support.person)+'" placeholder="Имя и телефон"><label class="eyebrow" for="sp2">Мой специалист</label><input type="text" id="sp2" data-f="spro" value="'+esc(S.support.pro)+'" placeholder="Имя и контакт"></section>';
+ }
+ h+='<section class="card"><h2>'+L("Время и встреча","Fuso e reencontro")+'</h2><label class="eyebrow" for="tz">'+L("Мой часовой пояс","Fuso horário dela")+'</label><select id="tz" data-f="tz">'+TZS.map(function(z){return '<option value="'+z[0]+'"'+(S.tz===z[0]?" selected":"")+'>'+z[1]+'</option>'}).join("")+'</select><label class="eyebrow" for="meet">'+L("Дата нашей встречи","Data do reencontro")+'</label><input type="date" id="meet" data-f="meet" value="'+esc(S.meet)+'"></section>';
+ h+='<p class="small muted">'+L("Всё, что ты отмечаешь, хранится только на этом устройстве. Не очищай данные сайта в Safari, чтобы ничего не потерять.","Tudo o que é marcado fica guardado só neste aparelho.")+'</p></div>';
+ return h;
+}
+
+/* =====================================================================
+   7. DESENHAR A TELA
+   ===================================================================== */
+var app=document.getElementById("app"),layerEl=document.getElementById("layer");
+var TABS=[["today","Сегодня","Ela hoje",I.today],["plan","План","Plano",I.plan],["us","Мы","Nós",I.heart],["pause","Пауза","Pausa",I.pause],["diary","Дневник","Diário",I.diary],["stats","Итоги","Resumo",I.stats]];
+function render(){
+ clearTimeout(breathT);
+ document.documentElement.lang=ana()?"ru":"pt-BR";
+ var v=S.tab;
+ app.className="app"+(ui.fade?" fade":"");ui.fade=false;
+ app.innerHTML=v==="today"?(ana()?vToday():vHerDay()):v==="plan"?vPlan():v==="us"?vUs():v==="pause"?vPause():v==="stats"?vStats():vDiary();
+ document.getElementById("tabs").innerHTML=TABS.map(function(t){return '<button class="tab" role="tab" data-a="tab" data-v="'+t[0]+'" aria-selected="'+(v===t[0])+'">'+ic(t[3])+'<span>'+(ana()?t[1]:t[2])+'</span></button>'}).join("");
+ var st0=layerEl.firstChild?layerEl.firstChild.scrollTop:0;
+ layerEl.innerHTML=ui.layer?'<div class="layer" role="dialog" aria-modal="true">'+(ui.layer==="hard"?lHard():lSettings())+'</div>':"";
+ if(layerEl.firstChild)layerEl.firstChild.scrollTop=st0;
+}
+function go(tab){S.tab=tab;ui.fade=true;ui.ex=null;ui.edit=false;save();render();window.scrollTo(0,0)}
+function findBlk(id){var r=null;["work","rest"].forEach(function(t){S.routine[t].forEach(function(b){if(b.id===id)r=b})});return r}
+
+/* =====================================================================
+   8. AÇÕES
+   ===================================================================== */
+var A={
+ tab:function(v){go(v)},
+ range:function(v){ui.range=+v;render()},
+ go:function(v){if(v==="study"){S.plan="study";go("plan")}else{S.plan="routine";ui.planDay=wIdx();go("plan")}},
+ layer:function(v){ui.layer=v;render()},
+ close:function(){ui.layer=null;render()},
+ seen:function(){var g=S.gifts[S.profile];if(g.length)g[g.length-1].seen=true;save();render()},
+ invite:function(){S.lastInvite=T;save();render()},
+ mood:function(v){day().mood=+v;save();render()},
+ word:function(v,el){var w=day().words,i=w.indexOf(v);i>-1?w.splice(i,1):w.push(v);el.setAttribute("aria-pressed",i<0);save()},
+ energy:function(v){day().energy=v;ui.showAll=false;save();render()},
+ care:function(v){var d=day();
+  if(v==="water"){d.water=((d.water||0)+1)%9;d.cares.water=d.water>0;save();render();if(d.water)toast(d.water===1?"Отмечено. Ты молодец.":"Ещё один стакан. Засчитано.");return}
+  d.cares[v]=!d.cares[v];save();render();if(d.cares[v])toast(PRAISE[Math.floor(Math.random()*PRAISE.length)])},
+ blk:function(v){var d=day(),b=findBlk(v);if(!b)return;
+  if(b.study){if(S.study.log.ana[T])delete S.study.log.ana[T];else S.study.log.ana[T]=true}else d.rt[v]=!d.rt[v];
+  save();render();if(blkDone(b,d))toast("Готово. Ещё одна петля в ряду.")},
+ plan:function(v){S.plan=v;ui.edit=false;save();render()},
+ pday:function(v){ui.planDay=+v;render()},
+ edit:function(){ui.edit=!ui.edit;render()},
+ showall:function(){ui.showAll=true;render()},
+ banchor:function(v,el){var b=findBlk(v);b.a=b.a?0:1;el.setAttribute("aria-pressed",!!b.a);save()},
+ bdel:function(v){var t=tplOf(ui.planDay);S.routine[t]=S.routine[t].filter(function(b){return b.id!==v});save();render()},
+ badd:function(){S.routine[tplOf(ui.planDay)].push({id:"u"+Date.now().toString(36),t:"12:00",ru:"",pt:""});save();render();var f=layerEl.querySelector("input")||app.querySelector('.edit input[type=text][value=""]');if(f)f.focus()},
+ rest:function(v){v=+v;var i=S.restDays.indexOf(v);i>-1?S.restDays.splice(i,1):S.restDays.push(v);save();render()},
+ padd:function(){var i=document.getElementById("newp");if(!i||!i.value.trim())return;day().prio.push({t:i.value.trim(),done:false});save();render();var n=document.getElementById("newp");if(n)n.focus()},
+ pdone:function(v){var p=day().prio[+v];p.done=!p.done;save();render();if(p.done)toast("Готово. Это было важно.")},
+ pmove:function(v){var d=day(),p=d.prio.splice(+v,1)[0],k=dkey(addDays(1));if(!S.days[k])S.days[k]={mood:0,words:[],energy:"",cares:{},prio:[],rt:{}};S.days[k].prio.push(p);save();render();toast("Хорошо. Завтра тоже день.")},
+ sdone:function(v){var l=S.study.log[S.profile];if(l[v])delete l[v];else{l[v]=true;toast(L("Засчитано. Язык растёт по чуть-чуть.","Contou. A língua cresce aos poucos."))}save();render()},
+ smin:function(v){S.study.min[S.profile]=+v;save();render()},
+ theme:function(v){S.study.offset+=+v;ui.card=0;ui.flip=false;save();render()},
+ flip:function(){ui.flip=!ui.flip;render()},
+ card:function(v){var n=THEMES[themeIdx()].w.length;ui.card=(ui.card+(+v)+n)%n;ui.flip=false;render()},
+ speak:function(){var w=THEMES[themeIdx()].w[ui.card%8];try{var u=new SpeechSynthesisUtterance(ana()?w.p:(w.rm||w.r));u.lang=ana()?"pt-BR":"ru-RU";u.rate=.8;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){toast(L("На этом устройстве нет голоса","Este aparelho não tem voz disponível"))}},
+ answer:function(){var a=document.getElementById("ans");if(!a||!a.value.trim())return;S.answers[T]=S.answers[T]||{};S.answers[T][ana()?"ana":"gab"]=a.value.trim();save();render()},
+ steps:function(){S.steps[ana()?"ana":"gab"]+=4000;save();render();toast(L("+3 км к нашей дороге","+3 km no caminho de vocês"))},
+ quickg:function(v){var q=QUICK_G[+v];S.gifts.ana.push({ru:q[1],pt:q[0]});save();toast("Enviado: "+q[1])},
+ quicka:function(v){var q=QUICK_A[+v];S.gifts.gab.push({ru:q[0],pt:q[1]});save();toast("Отправлено Габриэлю")},
+ ex:function(v){ui.ex=v;ui.step=0;render()},
+ exit:function(){ui.ex=null;render()},
+ breath:function(){runBreath()},
+ next:function(){var e=EX.filter(function(x){return x.id===ui.ex})[0],inp=document.getElementById("exin");
+  if(ana()&&ui.ex==="three"&&inp&&inp.value.trim()){var d=day();d.good=(d.good?d.good+"; ":"")+inp.value.trim();d.cares.good=true;save()}
+  if(ui.step<e.steps.length-1){ui.step++;render()}else{ui.ex=null;render();toast(L("Спасибо, что нашла для себя минуту.","Que bom que você tirou um minuto para si."))}},
+ hdel:function(v){S.helps.splice(+v,1);save();render()},
+ hadd:function(){var n=document.getElementById("newh");if(n&&n.value.trim()){S.helps.push(n.value.trim());save();render()}},
+ hpick:function(v){day().hard=v;save();render();toast("Хорошо. Только это.")},
+ signal:function(){day().sig=true;save();render();toast("Габриэль увидит: Анастасия хочет немного тепла")},
+ prof:function(v){S.profile=v;if(v==="gab"&&S.plan==="routine"&&!S.shared.routine)S.plan="study";ui.edit=false;ui.ex=null;save();render()},
+ share:function(v,el){S.shared[v]=!S.shared[v];el.setAttribute("aria-checked",S.shared[v]);save()},
+ en:function(v,el){var j=S.enabled.indexOf(v);j>-1?S.enabled.splice(j,1):S.enabled.push(v);el.setAttribute("aria-pressed",j<0);save()},
+ rem:function(v,el){S.reminders[v]=!S.reminders[v];el.setAttribute("aria-checked",S.reminders[v]);save()},
+ clearex:function(){Object.keys(S.days).forEach(function(k){if(S.days[k].example)delete S.days[k]});Object.keys(S.answers).forEach(function(k){if(S.answers[k].example)delete S.answers[k]});
+  S.gifts.ana=S.gifts.ana.filter(function(g){return !g.example});(S.study.ex||[]).forEach(function(x){delete S.study.log[x[0]][x[1]]});S.study.ex=[];S.steps={ana:0,gab:0};save();render()}
+};
+document.addEventListener("click",function(ev){var b=ev.target.closest("[data-a]");if(!b||b.disabled)return;var f=A[b.dataset.a];if(f)f(b.dataset.v,b,ev)});
+/* campos de texto: salvam sem redesenhar a tela, para não perder o foco */
+var F={
+ note:function(v){day().note=v},sperson:function(v){S.support.person=v},spro:function(v){S.support.pro=v},
+ bt:function(v,el){var b=findBlk(el.dataset.id);if(b&&v)b.t=v},
+ bx:function(v,el){var b=findBlk(el.dataset.id);if(b){b.ru=v;b.pt=v}},
+ tz:function(v){S.tz=v;save();render()},meet:function(v){S.meet=v;save();render()}
+};
+function onField(ev){var el=ev.target,f=el.dataset&&F[el.dataset.f];if(!f)return;if((el.dataset.f==="tz"||el.dataset.f==="meet")&&ev.type!=="change")return;f(el.value,el);save()}
+document.addEventListener("input",onField);document.addEventListener("change",onField);
+document.addEventListener("keydown",function(ev){if(ev.key==="Enter"&&ev.target.id==="newp")A.padd();if(ev.key==="Enter"&&ev.target.id==="newh")A.hadd();if(ev.key==="Escape"&&ui.layer)A.close()});
+
+/* balão de valor nos gráficos (toque ou passe o dedo) */
+var tip=document.createElement("div");tip.className="tip";tip.hidden=true;document.body.appendChild(tip);
+function tipOn(ev){var t=ev.target.closest&&ev.target.closest("[data-tip]");if(!t){tip.hidden=true;return}
+ tip.textContent=t.getAttribute("data-tip");tip.hidden=false;var r=t.getBoundingClientRect();
+ tip.style.left=Math.min(window.innerWidth-80,Math.max(80,r.left+r.width/2))+"px";tip.style.top=r.top+"px"}
+document.addEventListener("pointerover",tipOn);document.addEventListener("pointerdown",tipOn);
+document.addEventListener("scroll",function(){tip.hidden=true},true);
+
+render();
+setInterval(function(){var t=document.getElementById("thread");if(t)t.innerHTML=threadHtml()},30000);
+})();
+</script>
+</body>
+</html>
